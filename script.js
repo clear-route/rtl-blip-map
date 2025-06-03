@@ -141,7 +141,7 @@ function getQuadrantCenterCoordinates(quadrantName, chartWidth, chartHeight) {
 }
 
 function drawBlips(svg, data, chartWidth, chartHeight) {
-    const SCATTER_FACTOR = 35; 
+    // const SCATTER_FACTOR = 35; // No longer needed as randomness is removed
     const blipItems = svg.append("g").attr("class", "blips")
         .selectAll(".blip-item")
         .data(data)
@@ -184,12 +184,13 @@ function drawBlips(svg, data, chartWidth, chartHeight) {
                  jitter = JSON.parse(JSON.stringify(oneItemPattern[indexInQuadrant])); 
             }
 
-            if (quadrantBlipData.length > 0) { 
-                 jitter.dx += (Math.random() * SCATTER_FACTOR - SCATTER_FACTOR / 2);
-                 jitter.dy += (Math.random() * SCATTER_FACTOR - SCATTER_FACTOR / 2);
-            }
+            // Removed dynamic Math.random() scatter based on user feedback
+            // if (quadrantBlipData.length > 0) { 
+            //      jitter.dx += (Math.random() * SCATTER_FACTOR - SCATTER_FACTOR / 2);
+            //      jitter.dy += (Math.random() * SCATTER_FACTOR - SCATTER_FACTOR / 2);
+            // }
 
-            // Specific adjustments based on feedback (User Message 109)
+            // Specific individual blip adjustments are now part of the base jitter from patterns or direct nudges below
             if (d.id === "envs_forecast_selfserve") { 
                 jitter.dx += 15; 
                 jitter.dy -= 15; 
