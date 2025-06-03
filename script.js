@@ -141,7 +141,7 @@ function getQuadrantCenterCoordinates(quadrantName, chartWidth, chartHeight) {
 }
 
 function drawBlips(svg, data, chartWidth, chartHeight) {
-    // const SCATTER_FACTOR = 35; // No longer needed as randomness is removed
+    // const SCATTER_FACTOR = 35; // Not used for static layout
     const blipItems = svg.append("g").attr("class", "blips")
         .selectAll(".blip-item")
         .data(data)
@@ -184,22 +184,34 @@ function drawBlips(svg, data, chartWidth, chartHeight) {
                  jitter = JSON.parse(JSON.stringify(oneItemPattern[indexInQuadrant])); 
             }
 
-            // Removed dynamic Math.random() scatter based on user feedback
-            // if (quadrantBlipData.length > 0) { 
-            //      jitter.dx += (Math.random() * SCATTER_FACTOR - SCATTER_FACTOR / 2);
-            //      jitter.dy += (Math.random() * SCATTER_FACTOR - SCATTER_FACTOR / 2);
-            // }
-
-            // Specific individual blip adjustments are now part of the base jitter from patterns or direct nudges below
+            // Specific individual blip adjustments (previous, from commit 715658d)
             if (d.id === "envs_forecast_selfserve") { 
                 jitter.dx += 15; 
                 jitter.dy -= 15; 
             }
             if (d.id === "deploy_risk_canary") { 
-                jitter.dy -= 10; 
+                // Previous nudge was dy -= 10. New request 'up' can be additive or replace.
+                // Assuming additive for further movement: additional dy -= 10
+                jitter.dy -= 10; // This makes it -10 on top of any pattern dy
             }
             if (d.id === "qw_api_testing_prev") { 
-                jitter.dy -= 10;  
+                // Previous nudge was dy -= 10.
+                // Assuming additive for further movement: additional dy -=10
+                jitter.dy -= 10; // This makes it -10 on top of any pattern dy 
+            }
+
+            // New specific adjustments from User Message 117
+            if (d.id === "ts_microservices_prev") { // "hasty microservices up and left"
+                jitter.dx -= 10; // More left
+                jitter.dy -= 10; // More up
+            }
+            // For deploy_risk_canary, a nudge was already applied. Another 'up' is requested.
+            // The previous generic 'up' was dy -= 10. Another generic one could be on top. Total -20 from original pattern+scatter.
+            if (d.id === "deploy_risk_canary") { // "AI deploy / risk & canary up" (again)
+                 jitter.dy -= 10; // Additional -10 making it -20 total from prior specific nudge.
+            }
+            if (d.id === "build_analyze_select") { // "ai build analyze and select up slighly"
+                jitter.dy -= 8; // More up
             }
 
             return `translate(${baseCoords.x + jitter.dx}, ${baseCoords.y + jitter.dy})`;
