@@ -190,15 +190,15 @@ function drawBlips(svg, data, chartWidth, chartHeight) {
             }
 
             // Specific adjustments based on feedback (User Message 109)
-            if (d.id === "envs_forecast_selfserve") { // "Forecast and self serve a bit further up right"
-                jitter.dx += 15; // More right
-                jitter.dy -= 15; // More up
+            if (d.id === "envs_forecast_selfserve") { 
+                jitter.dx += 15; 
+                jitter.dy -= 15; 
             }
-            if (d.id === "deploy_risk_canary") { // "ai deploy up slightly"
-                jitter.dy -= 10; // More up
+            if (d.id === "deploy_risk_canary") { 
+                jitter.dy -= 10; 
             }
-            if (d.id === "qw_api_testing_prev") { // "focused api testing up slightly"
-                jitter.dy -= 10; // More up 
+            if (d.id === "qw_api_testing_prev") { 
+                jitter.dy -= 10;  
             }
 
             return `translate(${baseCoords.x + jitter.dx}, ${baseCoords.y + jitter.dy})`;
