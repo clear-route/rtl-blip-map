@@ -141,7 +141,7 @@ function getQuadrantCenterCoordinates(quadrantName, chartWidth, chartHeight) {
 }
 
 function drawBlips(svg, data, chartWidth, chartHeight) {
-    const SCATTER_FACTOR = 35; // Further increased scatter factor for more randomness
+    const SCATTER_FACTOR = 35; 
     const blipItems = svg.append("g").attr("class", "blips")
         .selectAll(".blip-item")
         .data(data)
@@ -153,19 +153,22 @@ function drawBlips(svg, data, chartWidth, chartHeight) {
             const quadrantBlipData = data.filter(item => item.quadrantName === d.quadrantName);
             const indexInQuadrant = quadrantBlipData.findIndex(item => item.id === d.id);
             
-            // Base spacing for patterns (reverted to /10 for tighter base grid, more emphasis on scatter)
-            const spacingX = chartWidth / 10; 
-            const spacingY = chartHeight / 10;
+            const spacingX = chartWidth / 8; // Increased base spacing 
+            const spacingY = chartHeight / 8; // Increased base spacing
 
+            // Adjusted patterns to push 'top half' blips further up
             const sixItemPattern = [ 
-                { dx: -spacingX, dy: -spacingY*0.8 }, { dx: 0, dy: -spacingY*1.0 }, { dx: spacingX, dy: -spacingY*0.8 },
-                { dx: -spacingX, dy: spacingY*0.8 },  { dx: 0, dy: spacingY*1.0 },  { dx: spacingX, dy: spacingY*0.8 }
+                { dx: -spacingX, dy: -spacingY*1.0 }, { dx: 0, dy: -spacingY*1.2 }, { dx: spacingX, dy: -spacingY*1.0 }, // Top row further up
+                { dx: -spacingX, dy: spacingY*0.8 },  { dx: 0, dy: spacingY*1.0 },  { dx: spacingX, dy: spacingY*0.8 }  // Bottom row same
             ];
             const fourItemPattern = [ 
-                { dx: -spacingX*0.7, dy: -spacingY*0.7 }, { dx: spacingX*0.7, dy: -spacingY*0.7 },
-                { dx: -spacingX*0.7, dy: spacingY*0.7 },  { dx: spacingX*0.7, dy: spacingY*0.7 }
+                { dx: -spacingX*0.7, dy: -spacingY*0.9 }, { dx: spacingX*0.7, dy: -spacingY*0.9 }, // Top row further up
+                { dx: -spacingX*0.7, dy: spacingY*0.7 },  { dx: spacingX*0.7, dy: spacingY*0.7 }  // Bottom row same
             ];
-            const twoItemPattern = [{ dx: -spacingX*0.6, dy: 0 }, { dx: spacingX*0.6, dy: 0 }];
+            // twoItemPattern needs similar consideration if one is 'top' and one 'bottom' or if they are side-by-side.
+            // If side-by-side, user might want one further left/right rather than up/down from center of pair.
+            // For now, assuming side-by-side might not be an issue for 'top of quadrant' feedback like the 2x2 or 2x3 patterns.
+            const twoItemPattern = [{ dx: -spacingX*0.6, dy: 0 }, { dx: spacingX*0.6, dy: 0 }]; 
             const oneItemPattern = [{dx: 0, dy: 0}];
 
             if (d.quadrantName === "Big Bets" && indexInQuadrant < sixItemPattern.length) {
@@ -173,14 +176,26 @@ function drawBlips(svg, data, chartWidth, chartHeight) {
             } else if (quadrantBlipData.length >= 4 && indexInQuadrant < fourItemPattern.length) { 
                  jitter = JSON.parse(JSON.stringify(fourItemPattern[indexInQuadrant])); 
             } else if (quadrantBlipData.length === 3 && indexInQuadrant < fourItemPattern.length) {
-                 jitter = JSON.parse(JSON.stringify(fourItemPattern[indexInQuadrant])); 
+                 // For 3 items, use the first two 'top' positions and one 'bottom middle' for asymmetry if desired,
+                 // or just the first 3 of a 4-item pattern. Current uses first 3 of fourItemPattern.
+                 // Let's try a more specific 3-item pattern to avoid symmetry directly.
+                 // Temp for now, may refine if 3 items is still an issue
+                const threeItemPattern = [
+                    { dx: 0, dy: -spacingY*0.9 }, // Top middle
+                    { dx: -spacingX*0.7, dy: spacingY*0.7 }, // Bottom left
+                    { dx: spacingX*0.7, dy: spacingY*0.7 }   // Bottom right
+                ];
+                if (indexInQuadrant < threeItemPattern.length) {
+                    jitter = JSON.parse(JSON.stringify(threeItemPattern[indexInQuadrant]));
+                } else { // Fallback if somehow index is out of bounds for 3 items
+                    jitter = JSON.parse(JSON.stringify(fourItemPattern[indexInQuadrant])); 
+                }
             } else if (quadrantBlipData.length === 2 && indexInQuadrant < twoItemPattern.length) {
                  jitter = JSON.parse(JSON.stringify(twoItemPattern[indexInQuadrant])); 
             } else if (quadrantBlipData.length === 1 && indexInQuadrant < oneItemPattern.length) {
                  jitter = JSON.parse(JSON.stringify(oneItemPattern[indexInQuadrant])); 
             }
 
-            // Add random scatter to the determined jitter position
             if (quadrantBlipData.length > 0) { 
                  jitter.dx += (Math.random() * SCATTER_FACTOR - SCATTER_FACTOR / 2);
                  jitter.dy += (Math.random() * SCATTER_FACTOR - SCATTER_FACTOR / 2);
