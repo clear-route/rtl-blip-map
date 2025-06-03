@@ -151,10 +151,8 @@ function drawBlips(svg, data, chartWidth, chartHeight) {
             let jitter = {dx: 0, dy: 0};
             const quadrantBlipData = data.filter(item => item.quadrantName === d.quadrantName);
             const indexInQuadrant = quadrantBlipData.findIndex(item => item.id === d.id);
-
-            const spacingX = chartWidth / 10; // Adjusted for potentially more items
+            const spacingX = chartWidth / 10;
             const spacingY = chartHeight / 10;
-
             const sixItemPattern = [ 
                 { dx: -spacingX, dy: -spacingY*0.8 }, { dx: 0, dy: -spacingY*1.0 }, { dx: spacingX, dy: -spacingY*0.8 },
                 { dx: -spacingX, dy: spacingY*0.8 },  { dx: 0, dy: spacingY*1.0 },  { dx: spacingX, dy: spacingY*0.8 }
@@ -170,7 +168,7 @@ function drawBlips(svg, data, chartWidth, chartHeight) {
                 jitter = sixItemPattern[indexInQuadrant];
             } else if (quadrantBlipData.length >= 4 && indexInQuadrant < fourItemPattern.length) { 
                  jitter = fourItemPattern[indexInQuadrant];
-            } else if (quadrantBlipData.length === 3 && indexInQuadrant < fourItemPattern.length) { // Use first 3 of 4-item pattern for 3 items
+            } else if (quadrantBlipData.length === 3 && indexInQuadrant < fourItemPattern.length) {
                  jitter = fourItemPattern[indexInQuadrant]; 
             } else if (quadrantBlipData.length === 2 && indexInQuadrant < twoItemPattern.length) {
                  jitter = twoItemPattern[indexInQuadrant];
@@ -206,8 +204,35 @@ function drawLegends(svg, chartWidth, chartHeight) {
 
     const rtlLegend = legendGroup.append("g").attr("class", "legend-rtl");
     rtlLegend.append("text").attr("x", 0).attr("y", -10).style("font-weight", "bold").style("font-size", "12px").text("RTL Phase (Color):");
+    
+    const itemsPerColumn1 = Math.ceil(uniqueRtlPhases.length / 2);
+    let firstColMaxWidth = 0;
+    const tempTextForWidthCalc = rtlLegend.append("text").style("font-size", "10px").style("visibility", "hidden");
+    uniqueRtlPhases.forEach((phase, idx) => {
+        if (idx < itemsPerColumn1) {
+            tempTextForWidthCalc.text(phase.rtlPhase);
+            try {
+                const textWidth = tempTextForWidthCalc.node().getComputedTextLength();
+                if (textWidth > firstColMaxWidth) firstColMaxWidth = textWidth;
+            } catch(e) {
+                firstColMaxWidth = Math.max(firstColMaxWidth, phase.rtlPhase.length * 6); // Estimate
+            }
+        }
+    });
+    tempTextForWidthCalc.remove();
+    firstColMaxWidth += legendRectSize + legendPadding + 10; // Add rect, padding, and a bit more buffer
+    const interColumnGap = 25;
+
     const rtlLegendItems = rtlLegend.selectAll(".legend-rtl-item").data(uniqueRtlPhases).enter().append("g")
-        .attr("class", "legend-rtl-item").attr("transform", (d, i) => `translate(0, ${(i * legendItemHeight) + 10})`);
+        .attr("class", "legend-rtl-item")
+        .attr("transform", (d, i) => {
+            const colIndex = (i < itemsPerColumn1) ? 0 : 1;
+            const itemIndexInCol = colIndex === 0 ? i : i - itemsPerColumn1;
+            const xPos = colIndex * (firstColMaxWidth + interColumnGap);
+            const yPos = (itemIndexInCol * legendItemHeight) + 10;
+            return `translate(${xPos}, ${yPos})`;
+        });
+
     rtlLegendItems.append("rect").attr("x", 0).attr("y", (legendItemHeight - legendRectSize) / 2 - legendRectSize / 2 +2 )
         .attr("width", legendRectSize).attr("height", legendRectSize).style("fill", d => d.rtlPhaseColor);
     rtlLegendItems.append("text").attr("x", legendRectSize + legendPadding).attr("y", legendItemHeight / 2  - legendRectSize / 2 + legendRectSize / 2 + 2)
@@ -218,23 +243,29 @@ function drawLegends(svg, chartWidth, chartHeight) {
         { label: "Medium AI (Augmented)", aiSize: 10 },
         { label: "Standard / Low AI", aiSize: 7 } 
     ];
-    let rtlLegendCalculatedWidth = 150; 
-    const tempText = rtlLegend.append("text").style("font-size", "10px"); 
-    let maxRtlTextWidth = 0;
-    uniqueRtlPhases.forEach(phase => {
-        tempText.text(phase.rtlPhase);
-        try {
-            const Twidth = tempText.node().getComputedTextLength();
-            if (Twidth > maxRtlTextWidth) maxRtlTextWidth = Twidth;
-        } catch(e) { maxRtlTextWidth = Math.max(maxRtlTextWidth, phase.rtlPhase.length * 6); console.warn('getComputedTextLength failed, estimating width.'); }
-    });
-    tempText.remove();
-    rtlLegendCalculatedWidth = legendRectSize + legendPadding + maxRtlTextWidth + 40;
 
-    const aiLegend = legendGroup.append("g").attr("class", "legend-ai").attr("transform", `translate(${rtlLegendCalculatedWidth}, 0)`); 
+    let secondColMaxWidth = 0;
+    const tempTextForSecondCol = rtlLegend.append("text").style("font-size", "10px").style("visibility", "hidden");
+    uniqueRtlPhases.forEach((phase, idx) => {
+        if (idx >= itemsPerColumn1) {
+            tempTextForSecondCol.text(phase.rtlPhase);
+            try {
+                const textWidth = tempTextForSecondCol.node().getComputedTextLength();
+                if (textWidth > secondColMaxWidth) secondColMaxWidth = textWidth;
+            } catch(e) {
+                secondColMaxWidth = Math.max(secondColMaxWidth, phase.rtlPhase.length * 6);
+            }
+        }
+    });
+    tempTextForSecondCol.remove();
+    secondColMaxWidth += legendRectSize + legendPadding;
+    
+    const totalRtlLegendWidth = firstColMaxWidth + interColumnGap + secondColMaxWidth;
+
+    const aiLegend = legendGroup.append("g").attr("class", "legend-ai").attr("transform", `translate(${totalRtlLegendWidth + 40}, 0)`); // Position AI legend after the two-column RTL legend
     aiLegend.append("text").attr("x", 0).attr("y", -10).style("font-weight", "bold").style("font-size", "12px").text("AI Integration (Size):");
     const aiLegendItems = aiLegend.selectAll(".legend-ai-item").data(aiLevelsData).enter().append("g")
-        .attr("class", "legend-ai-item").attr("transform", (d, i) => `translate(0, ${(i * (Math.max(...aiLevelsData.map(l => l.aiSize)) * 1.5 + legendItemHeight * 0.4)) + 10 + d.aiSize})`); // Adjusted spacing logic slightly
+        .attr("class", "legend-ai-item").attr("transform", (d, i) => `translate(0, ${(i * (Math.max(...aiLevelsData.map(l => l.aiSize)) * 1.5 + legendItemHeight * 0.4)) + 10 + d.aiSize})`);
     aiLegendItems.append("circle").attr("cx", d => d.aiSize).attr("cy", 0).attr("r", d => d.aiSize).style("fill", "#E0E0E0").style("stroke", "#333");
     aiLegendItems.append("text").attr("x", d => d.aiSize * 2 + legendPadding + 5).attr("y", 0).attr("dy", "0.35em").style("font-size", "10px").text(d => d.label);
 }
