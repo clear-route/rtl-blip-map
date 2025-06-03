@@ -153,21 +153,22 @@ function drawBlips(svg, data, chartWidth, chartHeight) {
             const quadrantBlipData = data.filter(item => item.quadrantName === d.quadrantName);
             const indexInQuadrant = quadrantBlipData.findIndex(item => item.id === d.id);
             
-            const spacingX = chartWidth / 8; // Increased base spacing 
-            const spacingY = chartHeight / 8; // Increased base spacing
+            const spacingX = chartWidth / 8; 
+            const spacingY = chartHeight / 8;
 
-            // Adjusted patterns to push 'top half' blips further up
             const sixItemPattern = [ 
-                { dx: -spacingX, dy: -spacingY*1.0 }, { dx: 0, dy: -spacingY*1.2 }, { dx: spacingX, dy: -spacingY*1.0 }, // Top row further up
-                { dx: -spacingX, dy: spacingY*0.8 },  { dx: 0, dy: spacingY*1.0 },  { dx: spacingX, dy: spacingY*0.8 }  // Bottom row same
+                { dx: -spacingX, dy: -spacingY*1.0 }, { dx: 0, dy: -spacingY*1.2 }, { dx: spacingX, dy: -spacingY*1.0 }, 
+                { dx: -spacingX, dy: spacingY*0.8 },  { dx: 0, dy: spacingY*1.0 },  { dx: spacingX, dy: spacingY*0.8 }  
             ];
             const fourItemPattern = [ 
-                { dx: -spacingX*0.7, dy: -spacingY*0.9 }, { dx: spacingX*0.7, dy: -spacingY*0.9 }, // Top row further up
-                { dx: -spacingX*0.7, dy: spacingY*0.7 },  { dx: spacingX*0.7, dy: spacingY*0.7 }  // Bottom row same
+                { dx: -spacingX*0.7, dy: -spacingY*0.9 }, { dx: spacingX*0.7, dy: -spacingY*0.9 }, 
+                { dx: -spacingX*0.7, dy: spacingY*0.7 },  { dx: spacingX*0.7, dy: spacingY*0.7 }  
             ];
-            // twoItemPattern needs similar consideration if one is 'top' and one 'bottom' or if they are side-by-side.
-            // If side-by-side, user might want one further left/right rather than up/down from center of pair.
-            // For now, assuming side-by-side might not be an issue for 'top of quadrant' feedback like the 2x2 or 2x3 patterns.
+            const threeItemPattern = [
+                { dx: 0, dy: -spacingY*0.9 }, 
+                { dx: -spacingX*0.7, dy: spacingY*0.7 }, 
+                { dx: spacingX*0.7, dy: spacingY*0.7 }   
+            ];
             const twoItemPattern = [{ dx: -spacingX*0.6, dy: 0 }, { dx: spacingX*0.6, dy: 0 }]; 
             const oneItemPattern = [{dx: 0, dy: 0}];
 
@@ -175,21 +176,8 @@ function drawBlips(svg, data, chartWidth, chartHeight) {
                 jitter = JSON.parse(JSON.stringify(sixItemPattern[indexInQuadrant])); 
             } else if (quadrantBlipData.length >= 4 && indexInQuadrant < fourItemPattern.length) { 
                  jitter = JSON.parse(JSON.stringify(fourItemPattern[indexInQuadrant])); 
-            } else if (quadrantBlipData.length === 3 && indexInQuadrant < fourItemPattern.length) {
-                 // For 3 items, use the first two 'top' positions and one 'bottom middle' for asymmetry if desired,
-                 // or just the first 3 of a 4-item pattern. Current uses first 3 of fourItemPattern.
-                 // Let's try a more specific 3-item pattern to avoid symmetry directly.
-                 // Temp for now, may refine if 3 items is still an issue
-                const threeItemPattern = [
-                    { dx: 0, dy: -spacingY*0.9 }, // Top middle
-                    { dx: -spacingX*0.7, dy: spacingY*0.7 }, // Bottom left
-                    { dx: spacingX*0.7, dy: spacingY*0.7 }   // Bottom right
-                ];
-                if (indexInQuadrant < threeItemPattern.length) {
-                    jitter = JSON.parse(JSON.stringify(threeItemPattern[indexInQuadrant]));
-                } else { // Fallback if somehow index is out of bounds for 3 items
-                    jitter = JSON.parse(JSON.stringify(fourItemPattern[indexInQuadrant])); 
-                }
+            } else if (quadrantBlipData.length === 3 && indexInQuadrant < threeItemPattern.length) {
+                 jitter = JSON.parse(JSON.stringify(threeItemPattern[indexInQuadrant]));
             } else if (quadrantBlipData.length === 2 && indexInQuadrant < twoItemPattern.length) {
                  jitter = JSON.parse(JSON.stringify(twoItemPattern[indexInQuadrant])); 
             } else if (quadrantBlipData.length === 1 && indexInQuadrant < oneItemPattern.length) {
@@ -199,6 +187,18 @@ function drawBlips(svg, data, chartWidth, chartHeight) {
             if (quadrantBlipData.length > 0) { 
                  jitter.dx += (Math.random() * SCATTER_FACTOR - SCATTER_FACTOR / 2);
                  jitter.dy += (Math.random() * SCATTER_FACTOR - SCATTER_FACTOR / 2);
+            }
+
+            // Specific adjustments based on feedback (User Message 109)
+            if (d.id === "envs_forecast_selfserve") { // "Forecast and self serve a bit further up right"
+                jitter.dx += 15; // More right
+                jitter.dy -= 15; // More up
+            }
+            if (d.id === "deploy_risk_canary") { // "ai deploy up slightly"
+                jitter.dy -= 10; // More up
+            }
+            if (d.id === "qw_api_testing_prev") { // "focused api testing up slightly"
+                jitter.dy -= 10; // More up 
             }
 
             return `translate(${baseCoords.x + jitter.dx}, ${baseCoords.y + jitter.dy})`;
