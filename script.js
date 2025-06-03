@@ -1,80 +1,78 @@
 const initiativesData = [
+    // Original 8 AI-focused initiatives
     {
-        id: "mno_predict_heal",
-        label: "AI M&O: Predict & Heal",
-        valueCategory: "High", effortCategory: "High",
-        rtlPhase: "Monitoring & Observability", rtlPhaseColor: "#4B0082",
-        aiLevel: "High", aiSize: 15, quadrantName: "Big Bets"
+        id: "mno_predict_heal", label: "AI M&O: Predict & Heal", valueCategory: "High", effortCategory: "High",
+        rtlPhase: "Monitoring & Observability", rtlPhaseColor: "#4B0082", aiLevel: "High", aiSize: 15, quadrantName: "Big Bets"
     },
     {
-        id: "deploy_risk_canary",
-        label: "AI Deploy: Risk & Canary",
-        valueCategory: "High", effortCategory: "High",
-        rtlPhase: "Deployment", rtlPhaseColor: "#DC143C",
-        aiLevel: "High", aiSize: 15, quadrantName: "Big Bets"
+        id: "deploy_risk_canary", label: "AI Deploy: Risk & Canary", valueCategory: "High", effortCategory: "High",
+        rtlPhase: "Deployment", rtlPhaseColor: "#DC143C", aiLevel: "High", aiSize: 15, quadrantName: "Big Bets"
     },
     {
-        id: "envs_forecast_selfserve",
-        label: "AI Envs: Forecast & Self-Serve",
-        valueCategory: "High", effortCategory: "High",
-        rtlPhase: "Environments", rtlPhaseColor: "#800080",
-        aiLevel: "High", aiSize: 15, quadrantName: "Big Bets"
+        id: "envs_forecast_selfserve", label: "AI Envs: Forecast & Self-Serve", valueCategory: "High", effortCategory: "High",
+        rtlPhase: "Environments", rtlPhaseColor: "#800080", aiLevel: "High", aiSize: 15, quadrantName: "Big Bets"
     },
     {
-        id: "design_rapid_pocs",
-        label: "AI Design: Rapid POCs",
-        valueCategory: "High", effortCategory: "High",
-        rtlPhase: "Design", rtlPhaseColor: "#FFD700",
-        aiLevel: "Medium", aiSize: 10, quadrantName: "Big Bets"
+        id: "design_rapid_pocs", label: "AI Design: Rapid POCs", valueCategory: "High", effortCategory: "High",
+        rtlPhase: "Design", rtlPhaseColor: "#FFD700", aiLevel: "Medium", aiSize: 10, quadrantName: "Big Bets"
     },
     {
-        id: "testing_data_prioritize",
-        label: "AI Testing: Data & Prioritize",
-        valueCategory: "High", effortCategory: "High",
-        rtlPhase: "Testing", rtlPhaseColor: "#4169E1",
-        aiLevel: "High", aiSize: 15, quadrantName: "Big Bets"
+        id: "testing_data_prioritize", label: "AI Testing: Data & Prioritize", valueCategory: "High", effortCategory: "High",
+        rtlPhase: "Testing", rtlPhaseColor: "#4169E1", aiLevel: "High", aiSize: 15, quadrantName: "Big Bets"
     },
     {
-        id: "dev_codegen_validate",
-        label: "AI Dev: Code Gen & Validate",
-        valueCategory: "High", effortCategory: "High",
-        rtlPhase: "Development", rtlPhaseColor: "#228B22",
-        aiLevel: "Medium", aiSize: 10, quadrantName: "Big Bets"
+        id: "dev_codegen_validate", label: "AI Dev: Code Gen & Validate", valueCategory: "High", effortCategory: "High",
+        rtlPhase: "Development", rtlPhaseColor: "#228B22", aiLevel: "Medium", aiSize: 10, quadrantName: "Big Bets"
     },
     {
-        id: "build_analyze_select",
-        label: "AI Build: Analyze & Select",
-        valueCategory: "Medium", effortCategory: "Medium",
-        rtlPhase: "Build", rtlPhaseColor: "#008080",
-        aiLevel: "High", aiSize: 15, quadrantName: "Fill-ins / Incrementals"
+        id: "build_analyze_select", label: "AI Build: Analyze & Select", valueCategory: "Medium", effortCategory: "Medium",
+        rtlPhase: "Build", rtlPhaseColor: "#008080", aiLevel: "High", aiSize: 15, quadrantName: "Fill-ins / Incrementals"
     },
     {
-        id: "ideation_feasibility_scan",
-        label: "AI Ideation: Feasibility Scan",
-        valueCategory: "Medium", effortCategory: "Medium",
-        rtlPhase: "Ideation & Planning", rtlPhaseColor: "#FFA500",
-        aiLevel: "Medium", aiSize: 10, quadrantName: "Fill-ins / Incrementals"
+        id: "ideation_feasibility_scan", label: "AI Ideation: Feasibility Scan", valueCategory: "Medium", effortCategory: "Medium",
+        rtlPhase: "Ideation & Planning", rtlPhaseColor: "#FFA500", aiLevel: "Medium", aiSize: 10, quadrantName: "Fill-ins / Incrementals"
+    },
+    // Previously added 3 initiatives (from first modification round)
+    {
+        id: "qw_api_testing_prev", label: "Focused API Testing Adoption", valueCategory: "High", effortCategory: "Low", 
+        rtlPhase: "Test", rtlPhaseColor: "#4169E1", aiLevel: "Low", aiSize: 7, quadrantName: "Quick Wins" 
     },
     {
-        id: "qw_api_testing", 
-        label: "Focused API Testing Adoption", 
-        valueCategory: "High", effortCategory: "Low", 
-        rtlPhase: "Test", rtlPhaseColor: "#4169E1", 
-        aiLevel: "Low", aiSize: 7, quadrantName: "Quick Wins" 
+        id: "qw_golden_paths_prev", label: "Define Core Golden Paths", valueCategory: "High", effortCategory: "Low", 
+        rtlPhase: "Development", rtlPhaseColor: "#228B22", aiLevel: "Low", aiSize: 7, quadrantName: "Quick Wins" 
     },
     {
-        id: "qw_golden_paths", 
-        label: "Define Core Golden Paths", 
-        valueCategory: "High", effortCategory: "Low", 
-        rtlPhase: "Development", rtlPhaseColor: "#228B22", 
-        aiLevel: "Low", aiSize: 7, quadrantName: "Quick Wins" 
+        id: "ts_microservices_prev", label: "Hasty Microservices Migration", valueCategory: "Low", effortCategory: "High", 
+        rtlPhase: "Platform", rtlPhaseColor: "#800080", aiLevel: "Low", aiSize: 7, quadrantName: "Time Sinks / Reconsider" 
+    },
+    // New 7 initiatives for >=4 per quadrant goal
+    {
+        id: "qw_refine_test_strategy", label: "Refine Test Strategy Doc", valueCategory: "High", effortCategory: "Low",
+        rtlPhase: "Test", rtlPhaseColor: "#4169E1", aiLevel: "Low", aiSize: 7, quadrantName: "Quick Wins"
     },
     {
-        id: "ts_microservices", 
-        label: "Hasty Microservices Migration", 
-        valueCategory: "Low", effortCategory: "High", 
-        rtlPhase: "Platform", rtlPhaseColor: "#800080", 
-        aiLevel: "Low", aiSize: 7, quadrantName: "Time Sinks / Reconsider" 
+        id: "qw_secrets_vault", label: "Basic Secrets Vault Setup", valueCategory: "High", effortCategory: "Low",
+        rtlPhase: "Secure", rtlPhaseColor: "#8A2BE2", aiLevel: "Low", aiSize: 7, quadrantName: "Quick Wins"
+    },
+    {
+        id: "fi_dev_hub_mvp", label: "Launch Basic Developer Hub (MVP)", valueCategory: "Medium", effortCategory: "Medium",
+        rtlPhase: "Development", rtlPhaseColor: "#228B22", aiLevel: "Low", aiSize: 7, quadrantName: "Fill-ins / Incrementals"
+    },
+    {
+        id: "fi_optimize_ci_pipeline", label: "Optimize Key CI Pipeline", valueCategory: "Medium", effortCategory: "Medium",
+        rtlPhase: "Build", rtlPhaseColor: "#008080", aiLevel: "Low", aiSize: 7, quadrantName: "Fill-ins / Incrementals"
+    },
+    {
+        id: "ts_manual_regression", label: "Manual Regression for All Changes", valueCategory: "Low", effortCategory: "High",
+        rtlPhase: "Test", rtlPhaseColor: "#4169E1", aiLevel: "Low", aiSize: 7, quadrantName: "Time Sinks / Reconsider"
+    },
+    {
+        id: "ts_overcustom_cots", label: "Over-customizing COTS Tools", valueCategory: "Low", effortCategory: "High",
+        rtlPhase: "Platform", rtlPhaseColor: "#800080", aiLevel: "Low", aiSize: 7, quadrantName: "Time Sinks / Reconsider"
+    },
+    {
+        id: "ts_blind_automation", label: "100% Test Automation Blindly", valueCategory: "Low", effortCategory: "High",
+        rtlPhase: "Test", rtlPhaseColor: "#4169E1", aiLevel: "Low", aiSize: 7, quadrantName: "Time Sinks / Reconsider"
     }
 ];
 
@@ -154,22 +152,30 @@ function drawBlips(svg, data, chartWidth, chartHeight) {
             const quadrantBlipData = data.filter(item => item.quadrantName === d.quadrantName);
             const indexInQuadrant = quadrantBlipData.findIndex(item => item.id === d.id);
 
-            const bigBetsJitter = [
-                { dx: -50, dy: -40 }, { dx: 0, dy: -55 }, { dx: 50, dy: -40 },
-                { dx: -50, dy: 40 },  { dx: 0, dy: 55 },  { dx: 50, dy: 40 } 
-            ];
-            const fillInsJitter = [{ dx: -45, dy: 0 }, { dx: 45, dy: 0 }];
-            const quickWinsJitter = [{ dx: -45, dy: 0 }, { dx: 45, dy: 0 }];
-            const timeSinksJitter = [{ dx: 0, dy: 0 }];
+            const spacingX = chartWidth / 10; // Adjusted for potentially more items
+            const spacingY = chartHeight / 10;
 
-            if (d.quadrantName === "Big Bets" && indexInQuadrant < bigBetsJitter.length) {
-                jitter = bigBetsJitter[indexInQuadrant];
-            } else if (d.quadrantName === "Fill-ins / Incrementals" && indexInQuadrant < fillInsJitter.length) {
-                jitter = fillInsJitter[indexInQuadrant];
-            } else if (d.quadrantName === "Quick Wins" && indexInQuadrant < quickWinsJitter.length) {
-                jitter = quickWinsJitter[indexInQuadrant];
-            } else if (d.quadrantName === "Time Sinks / Reconsider" && indexInQuadrant < timeSinksJitter.length) {
-                jitter = timeSinksJitter[indexInQuadrant];
+            const sixItemPattern = [ 
+                { dx: -spacingX, dy: -spacingY*0.8 }, { dx: 0, dy: -spacingY*1.0 }, { dx: spacingX, dy: -spacingY*0.8 },
+                { dx: -spacingX, dy: spacingY*0.8 },  { dx: 0, dy: spacingY*1.0 },  { dx: spacingX, dy: spacingY*0.8 }
+            ];
+            const fourItemPattern = [ 
+                { dx: -spacingX*0.7, dy: -spacingY*0.7 }, { dx: spacingX*0.7, dy: -spacingY*0.7 },
+                { dx: -spacingX*0.7, dy: spacingY*0.7 },  { dx: spacingX*0.7, dy: spacingY*0.7 }
+            ];
+            const twoItemPattern = [{ dx: -spacingX*0.6, dy: 0 }, { dx: spacingX*0.6, dy: 0 }];
+            const oneItemPattern = [{dx: 0, dy: 0}];
+
+            if (d.quadrantName === "Big Bets" && indexInQuadrant < sixItemPattern.length) {
+                jitter = sixItemPattern[indexInQuadrant];
+            } else if (quadrantBlipData.length >= 4 && indexInQuadrant < fourItemPattern.length) { 
+                 jitter = fourItemPattern[indexInQuadrant];
+            } else if (quadrantBlipData.length === 3 && indexInQuadrant < fourItemPattern.length) { // Use first 3 of 4-item pattern for 3 items
+                 jitter = fourItemPattern[indexInQuadrant]; 
+            } else if (quadrantBlipData.length === 2 && indexInQuadrant < twoItemPattern.length) {
+                 jitter = twoItemPattern[indexInQuadrant];
+            } else if (quadrantBlipData.length === 1 && indexInQuadrant < oneItemPattern.length) {
+                 jitter = oneItemPattern[indexInQuadrant];
             }
             return `translate(${baseCoords.x + jitter.dx}, ${baseCoords.y + jitter.dy})`;
         });
@@ -182,7 +188,7 @@ function drawBlips(svg, data, chartWidth, chartHeight) {
 
     blipItems.append("text")
         .attr("class", "blip-label")
-        .attr("y", d => d.aiSize + 14) // Increased offset for label legibility
+        .attr("y", d => d.aiSize + 14) 
         .attr("text-anchor", "middle")
         .style("font-size", "9px") 
         .text(d => d.label);
@@ -210,14 +216,14 @@ function drawLegends(svg, chartWidth, chartHeight) {
     const aiLevelsData = [
         { label: "High AI (Driven)", aiSize: 15 },
         { label: "Medium AI (Augmented)", aiSize: 10 },
-        { label: "Standard / Low AI", aiSize: 7 } // Ensuring this is targeted by the step
+        { label: "Standard / Low AI", aiSize: 7 } 
     ];
     let rtlLegendCalculatedWidth = 150; 
-    const tempText = rtlLegend.append("text").style("font-size", "10px"); // Temp for width calc
+    const tempText = rtlLegend.append("text").style("font-size", "10px"); 
     let maxRtlTextWidth = 0;
     uniqueRtlPhases.forEach(phase => {
         tempText.text(phase.rtlPhase);
-        try { // Robustness for headless environments if getComputedTextLength fails
+        try {
             const Twidth = tempText.node().getComputedTextLength();
             if (Twidth > maxRtlTextWidth) maxRtlTextWidth = Twidth;
         } catch(e) { maxRtlTextWidth = Math.max(maxRtlTextWidth, phase.rtlPhase.length * 6); console.warn('getComputedTextLength failed, estimating width.'); }
@@ -228,7 +234,7 @@ function drawLegends(svg, chartWidth, chartHeight) {
     const aiLegend = legendGroup.append("g").attr("class", "legend-ai").attr("transform", `translate(${rtlLegendCalculatedWidth}, 0)`); 
     aiLegend.append("text").attr("x", 0).attr("y", -10).style("font-weight", "bold").style("font-size", "12px").text("AI Integration (Size):");
     const aiLegendItems = aiLegend.selectAll(".legend-ai-item").data(aiLevelsData).enter().append("g")
-        .attr("class", "legend-ai-item").attr("transform", (d, i) => `translate(0, ${(i * (15 * 1.8)) + 10 + d.aiSize})`);
+        .attr("class", "legend-ai-item").attr("transform", (d, i) => `translate(0, ${(i * (Math.max(...aiLevelsData.map(l => l.aiSize)) * 1.5 + legendItemHeight * 0.4)) + 10 + d.aiSize})`); // Adjusted spacing logic slightly
     aiLegendItems.append("circle").attr("cx", d => d.aiSize).attr("cy", 0).attr("r", d => d.aiSize).style("fill", "#E0E0E0").style("stroke", "#333");
     aiLegendItems.append("text").attr("x", d => d.aiSize * 2 + legendPadding + 5).attr("y", 0).attr("dy", "0.35em").style("font-size", "10px").text(d => d.label);
 }

@@ -143,3 +143,87 @@ The matrix plots initiatives based on **Expected Business Value / Strategic Impa
 *   **Rationale:** A common pitfall where organizations jump to microservices without foundational readiness, leading to high effort for potentially negative or very delayed value. Should be reconsidered until foundations are solid.
 
 ---
+
+### 12. Initiative: Refine Test Strategy Doc
+*   **Label:** "Refine Test Strategy Doc"
+*   **RTL Phase:** Test
+*   **Color:** Royal Blue (#4169E1)
+*   **AI Integration:** Low / Standard (Size: Small - 7px radius)
+*   **Value/Impact:** High (Provides clarity, direction, and efficiency for all testing activities; improves quality focus.)
+*   **Effort/Complexity:** Low (Requires workshops, documentation updates, and communication; less technical overhead.)
+*   **Assigned Quadrant:** **Quick Wins**
+*   **Rationale:** A foundational document that, if lacking or outdated, can be quickly improved for significant impact on testing effectiveness and alignment.
+
+---
+
+### 13. Initiative: Basic Secrets Vault Setup
+*   **Label:** "Basic Secrets Vault Setup"
+*   **RTL Phase:** Secure
+*   **Color:** BlueViolet (#8A2BE2)
+*   **AI Integration:** Low / Standard (Size: Small - 7px radius)
+*   **Value/Impact:** High (Critical for security posture, reduces risk of exposed secrets, facilitates secure automation.)
+*   **Effort/Complexity:** Low (Initial setup of a managed secrets vault like HashiCorp Vault, AWS Secrets Manager, etc., for a few key applications is relatively straightforward.)
+*   **Assigned Quadrant:** **Quick Wins**
+*   **Rationale:** Addresses a fundamental security need with readily available tools, providing high value for manageable initial effort.
+
+---
+
+### 14. Initiative: Launch Basic Developer Hub (MVP)
+*   **Label:** "Launch Basic Developer Hub (MVP)"
+*   **RTL Phase:** Development 
+*   **Color:** Forest Green (#228B22)
+*   **AI Integration:** Low / Standard (Size: Small - 7px radius)
+*   **Value/Impact:** Medium (Improves developer onboarding, knowledge sharing, discovery of tools and best practices, overall DevEx.)
+*   **Effort/Complexity:** Medium (Requires selecting a simple platform (e.g., Backstage, static site generator), initial content creation, and establishing contribution process.)
+*   **Assigned Quadrant:** **Fill-ins / Incrementals**
+*   **Rationale:** A good incremental improvement for developer productivity and experience that can start small and grow.
+
+---
+
+### 15. Initiative: Optimize Key CI Pipeline
+*   **Label:** "Optimize Key CI Pipeline"
+*   **RTL Phase:** Build
+*   **Color:** Ocean Teal (#008080)
+*   **AI Integration:** Low / Standard (Size: Small - 7px radius)
+*   **Value/Impact:** Medium (Can significantly reduce build/test times for a critical path, improving feedback loops and developer productivity.)
+*   **Effort/Complexity:** Medium (Involves analysis of a specific pipeline, implementing caching, parallelization, or step optimization.)
+*   **Assigned Quadrant:** **Fill-ins / Incrementals**
+*   **Rationale:** Targeted optimization that can yield noticeable improvements without overhauling the entire CI/CD system.
+
+---
+
+### 16. Initiative: Manual Regression for All Changes
+*   **Label:** "Manual Regression for All Changes"
+*   **RTL Phase:** Test
+*   **Color:** Royal Blue (#4169E1)
+*   **AI Integration:** Low / Standard (Size: Small - 7px radius)
+*   **Value/Impact:** Low (Becomes increasingly ineffective, slow, and error-prone as system complexity grows; does not scale.)
+*   **Effort/Complexity:** High (Massive, repetitive human effort required, significant time sink, delays releases.)
+*   **Assigned Quadrant:** **Time Sinks / Reconsider**
+*   **Rationale:** A common anti-pattern or pitfall where reliance on extensive manual regression cripples agility and is unsustainable. Automation is key.
+
+---
+
+### 17. Initiative: Over-customizing COTS Tools
+*   **Label:** "Over-customizing COTS Tools"
+*   **RTL Phase:** Platform 
+*   **Color:** Deep Purple (#800080)
+*   **AI Integration:** Low / Standard (Size: Small - 7px radius)
+*   **Value/Impact:** Low (Often negates the benefits of using Commercial-Off-The-Shelf software, increases maintenance burden, makes upgrades difficult, and locks into specific non-standard configurations.)
+*   **Effort/Complexity:** High (Requires deep expertise, significant development effort for customization, and ongoing support for non-standard features.)
+*   **Assigned Quadrant:** **Time Sinks / Reconsider**
+*   **Rationale:** A pitfall where trying to make a COTS tool do everything perfectly leads to a high-effort, brittle solution that is hard to maintain and evolve.
+
+---
+
+### 18. Initiative: 100% Test Automation Blindly
+*   **Label:** "100% Test Automation Blindly"
+*   **RTL Phase:** Test
+*   **Color:** Royal Blue (#4169E1)
+*   **AI Integration:** Low / Standard (Size: Small - 7px radius)
+*   **Value/Impact:** Low (Chasing a 100% automation metric without strategic consideration often leads to automating low-value tests, creating flaky tests, and high maintenance for diminishing returns.)
+*   **Effort/Complexity:** High (Significant effort to write and maintain tests for every conceivable scenario, including those with little risk or business impact.)
+*   **Assigned Quadrant:** **Time Sinks / Reconsider**
+*   **Rationale:** Test automation should be risk-based and strategic; blindly aiming for 100% is often counterproductive and a resource drain.
+
+---
