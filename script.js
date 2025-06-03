@@ -141,7 +141,7 @@ function getQuadrantCenterCoordinates(quadrantName, chartWidth, chartHeight) {
 }
 
 function drawBlips(svg, data, chartWidth, chartHeight) {
-    const SCATTER_FACTOR = 15; // Max random offset in pixels (e.g.,_ +/- 7.5px)
+    const SCATTER_FACTOR = 25; // Increased scatter factor
     const blipItems = svg.append("g").attr("class", "blips")
         .selectAll(".blip-item")
         .data(data)
@@ -152,8 +152,11 @@ function drawBlips(svg, data, chartWidth, chartHeight) {
             let jitter = {dx: 0, dy: 0};
             const quadrantBlipData = data.filter(item => item.quadrantName === d.quadrantName);
             const indexInQuadrant = quadrantBlipData.findIndex(item => item.id === d.id);
-            const spacingX = chartWidth / 10;
-            const spacingY = chartHeight / 10;
+            
+            // Adjusted base spacing for more distribution
+            const spacingX = chartWidth / 9; 
+            const spacingY = chartHeight / 9;
+
             const sixItemPattern = [ 
                 { dx: -spacingX, dy: -spacingY*0.8 }, { dx: 0, dy: -spacingY*1.0 }, { dx: spacingX, dy: -spacingY*0.8 },
                 { dx: -spacingX, dy: spacingY*0.8 },  { dx: 0, dy: spacingY*1.0 },  { dx: spacingX, dy: spacingY*0.8 }
@@ -168,17 +171,17 @@ function drawBlips(svg, data, chartWidth, chartHeight) {
             if (d.quadrantName === "Big Bets" && indexInQuadrant < sixItemPattern.length) {
                 jitter = sixItemPattern[indexInQuadrant];
             } else if (quadrantBlipData.length >= 4 && indexInQuadrant < fourItemPattern.length) { 
-                 jitter = fourItemPattern[indexInQuadrant];
+                 jitter = JSON.parse(JSON.stringify(fourItemPattern[indexInQuadrant])); // Deep copy
             } else if (quadrantBlipData.length === 3 && indexInQuadrant < fourItemPattern.length) {
-                 jitter = fourItemPattern[indexInQuadrant]; 
+                 jitter = JSON.parse(JSON.stringify(fourItemPattern[indexInQuadrant])); // Deep copy
             } else if (quadrantBlipData.length === 2 && indexInQuadrant < twoItemPattern.length) {
-                 jitter = twoItemPattern[indexInQuadrant];
+                 jitter = JSON.parse(JSON.stringify(twoItemPattern[indexInQuadrant])); // Deep copy
             } else if (quadrantBlipData.length === 1 && indexInQuadrant < oneItemPattern.length) {
-                 jitter = oneItemPattern[indexInQuadrant];
+                 jitter = JSON.parse(JSON.stringify(oneItemPattern[indexInQuadrant])); // Deep copy
             }
 
             // Add random scatter to the determined jitter position
-            if (quadrantBlipData.length > 1 || d.quadrantName === "Big Bets") { // Avoid scatter for single items unless in a busy quad
+            if (quadrantBlipData.length > 0) { // Apply scatter to all items if more than 0 (or based on specific factor)
                  jitter.dx += (Math.random() * SCATTER_FACTOR - SCATTER_FACTOR / 2);
                  jitter.dy += (Math.random() * SCATTER_FACTOR - SCATTER_FACTOR / 2);
             }
@@ -223,7 +226,7 @@ function drawLegends(svg, chartWidth, chartHeight) {
             const textWidth = tempTextForWidthCalc.node().getComputedTextLength();
             if (textWidth > rtlColumnWidth) rtlColumnWidth = textWidth;
         } catch(e) {
-            rtlColumnWidth = Math.max(rtlColumnWidth, phase.rtlPhase.length * 6); // Estimate
+            rtlColumnWidth = Math.max(rtlColumnWidth, phase.rtlPhase.length * 6); 
             console.warn('getComputedTextLength failed for RTL legend width, estimating.');
         }
     });
