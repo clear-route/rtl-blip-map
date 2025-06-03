@@ -141,6 +141,7 @@ function getQuadrantCenterCoordinates(quadrantName, chartWidth, chartHeight) {
 }
 
 function drawBlips(svg, data, chartWidth, chartHeight) {
+    const SCATTER_FACTOR = 15; // Max random offset in pixels (e.g.,_ +/- 7.5px)
     const blipItems = svg.append("g").attr("class", "blips")
         .selectAll(".blip-item")
         .data(data)
@@ -175,6 +176,13 @@ function drawBlips(svg, data, chartWidth, chartHeight) {
             } else if (quadrantBlipData.length === 1 && indexInQuadrant < oneItemPattern.length) {
                  jitter = oneItemPattern[indexInQuadrant];
             }
+
+            // Add random scatter to the determined jitter position
+            if (quadrantBlipData.length > 1 || d.quadrantName === "Big Bets") { // Avoid scatter for single items unless in a busy quad
+                 jitter.dx += (Math.random() * SCATTER_FACTOR - SCATTER_FACTOR / 2);
+                 jitter.dy += (Math.random() * SCATTER_FACTOR - SCATTER_FACTOR / 2);
+            }
+
             return `translate(${baseCoords.x + jitter.dx}, ${baseCoords.y + jitter.dy})`;
         });
 
@@ -220,7 +228,7 @@ function drawLegends(svg, chartWidth, chartHeight) {
         }
     });
     tempTextForWidthCalc.remove();
-    rtlColumnWidth += legendRectSize + legendPadding + 15; // Rect size, padding, and inter-item horizontal buffer for a column
+    rtlColumnWidth += legendRectSize + legendPadding + 15; 
     const interColumnGapRtl = 20;
 
     const rtlLegendItems = rtlLegend.selectAll(".legend-rtl-item").data(uniqueRtlPhases).enter().append("g")
@@ -235,15 +243,15 @@ function drawLegends(svg, chartWidth, chartHeight) {
 
     rtlLegendItems.append("rect")
         .attr("x", 0)
-        .attr("y", (legendItemHeight - legendRectSize) / 2 ) // Centering rect vertically
+        .attr("y", (legendItemHeight - legendRectSize) / 2 )
         .attr("width", legendRectSize)
         .attr("height", legendRectSize)
         .style("fill", d => d.rtlPhaseColor);
 
     rtlLegendItems.append("text")
         .attr("x", legendRectSize + legendPadding)
-        .attr("y", legendItemHeight / 2) // Align text's baseline to midpoint of item height
-        .attr("dominant-baseline", "middle") // Vertically center text using baseline
+        .attr("y", legendItemHeight / 2) 
+        .attr("dominant-baseline", "middle") 
         .style("font-size", "10px")
         .text(d => d.rtlPhase);
     
