@@ -54,10 +54,31 @@ const initiativesData = [
         valueCategory: "Medium", effortCategory: "Medium",
         rtlPhase: "Ideation & Planning", rtlPhaseColor: "#FFA500",
         aiLevel: "Medium", aiSize: 10, quadrantName: "Fill-ins / Incrementals"
+    },
+    {
+        id: "qw_api_testing", 
+        label: "Focused API Testing Adoption", 
+        valueCategory: "High", effortCategory: "Low", 
+        rtlPhase: "Test", rtlPhaseColor: "#4169E1", 
+        aiLevel: "Low", aiSize: 7, quadrantName: "Quick Wins" 
+    },
+    {
+        id: "qw_golden_paths", 
+        label: "Define Core Golden Paths", 
+        valueCategory: "High", effortCategory: "Low", 
+        rtlPhase: "Development", rtlPhaseColor: "#228B22", 
+        aiLevel: "Low", aiSize: 7, quadrantName: "Quick Wins" 
+    },
+    {
+        id: "ts_microservices", 
+        label: "Hasty Microservices Migration", 
+        valueCategory: "Low", effortCategory: "High", 
+        rtlPhase: "Platform", rtlPhaseColor: "#800080", 
+        aiLevel: "Low", aiSize: 7, quadrantName: "Time Sinks / Reconsider" 
     }
 ];
 
-const margin = {top: 80, right: 150, bottom: 180, left: 100}; // Adjusted bottom margin for legends
+const margin = {top: 80, right: 150, bottom: 180, left: 100};
 const width = 960 - margin.left - margin.right;
 const height = 700 - margin.top - margin.bottom;
 
@@ -97,14 +118,12 @@ function drawQuadrants(svg, chartWidth, chartHeight) {
     const yMidPoint = chartHeight / 2;
     svg.append("line").attr("x1", xMidPoint).attr("y1", 0).attr("x2", xMidPoint).attr("y2", chartHeight).attr("stroke", "#ccc").attr("stroke-dasharray", "5,5");
     svg.append("line").attr("x1", 0).attr("y1", yMidPoint).attr("x2", chartWidth).attr("y2", yMidPoint).attr("stroke", "#ccc").attr("stroke-dasharray", "5,5");
-    
     const labelData = [
         { x: chartWidth * 0.25, y: chartHeight * 0.25, main: "Time Sinks / Reconsider", sub: "(Low Value, High Effort)" },
         { x: chartWidth * 0.75, y: chartHeight * 0.25, main: "Big Bets", sub: "(High Value, High Effort)" },
         { x: chartWidth * 0.25, y: chartHeight * 0.75, main: "Fill-ins / Incrementals", sub: "(Medium Value, Medium Effort)" },
         { x: chartWidth * 0.75, y: chartHeight * 0.75, main: "Quick Wins", sub: "(High Value, Low Effort)" }
     ];
-
     labelData.forEach(ld => {
         svg.append("text").attr("class", "quadrant-label")
             .attr("x", ld.x).attr("y", ld.y - 10).attr("text-anchor", "middle").text(ld.main);
@@ -116,7 +135,9 @@ function drawQuadrants(svg, chartWidth, chartHeight) {
 function getQuadrantCenterCoordinates(quadrantName, chartWidth, chartHeight) {
     const centers = {
         "Big Bets": { x: chartWidth * 0.75, y: chartHeight * 0.25 },
-        "Fill-ins / Incrementals": { x: chartWidth * 0.25, y: chartHeight * 0.75 }
+        "Fill-ins / Incrementals": { x: chartWidth * 0.25, y: chartHeight * 0.75 },
+        "Quick Wins": { x: chartWidth * 0.75, y: chartHeight * 0.75 },
+        "Time Sinks / Reconsider": { x: chartWidth * 0.25, y: chartHeight * 0.25 }
     };
     return centers[quadrantName] || { x: chartWidth / 2, y: chartHeight / 2 };
 }
@@ -132,15 +153,23 @@ function drawBlips(svg, data, chartWidth, chartHeight) {
             let jitter = {dx: 0, dy: 0};
             const quadrantBlipData = data.filter(item => item.quadrantName === d.quadrantName);
             const indexInQuadrant = quadrantBlipData.findIndex(item => item.id === d.id);
+
             const bigBetsJitter = [
                 { dx: -50, dy: -40 }, { dx: 0, dy: -55 }, { dx: 50, dy: -40 },
                 { dx: -50, dy: 40 },  { dx: 0, dy: 55 },  { dx: 50, dy: 40 } 
             ];
             const fillInsJitter = [{ dx: -45, dy: 0 }, { dx: 45, dy: 0 }];
+            const quickWinsJitter = [{ dx: -45, dy: 0 }, { dx: 45, dy: 0 }];
+            const timeSinksJitter = [{ dx: 0, dy: 0 }];
+
             if (d.quadrantName === "Big Bets" && indexInQuadrant < bigBetsJitter.length) {
                 jitter = bigBetsJitter[indexInQuadrant];
             } else if (d.quadrantName === "Fill-ins / Incrementals" && indexInQuadrant < fillInsJitter.length) {
                 jitter = fillInsJitter[indexInQuadrant];
+            } else if (d.quadrantName === "Quick Wins" && indexInQuadrant < quickWinsJitter.length) {
+                jitter = quickWinsJitter[indexInQuadrant];
+            } else if (d.quadrantName === "Time Sinks / Reconsider" && indexInQuadrant < timeSinksJitter.length) {
+                jitter = timeSinksJitter[indexInQuadrant];
             }
             return `translate(${baseCoords.x + jitter.dx}, ${baseCoords.y + jitter.dy})`;
         });
@@ -153,7 +182,7 @@ function drawBlips(svg, data, chartWidth, chartHeight) {
 
     blipItems.append("text")
         .attr("class", "blip-label")
-        .attr("y", d => d.aiSize + 12) 
+        .attr("y", d => d.aiSize + 14) // Increased offset for label legibility
         .attr("text-anchor", "middle")
         .style("font-size", "9px") 
         .text(d => d.label);
@@ -165,92 +194,43 @@ function drawLegends(svg, chartWidth, chartHeight) {
     const legendRectSize = 15;
     const legendGroup = svg.append("g").attr("class", "legends-group")
                            .attr("transform", `translate(0, ${chartHeight + 70})`);
+    const uniqueRtlPhases = initiativesData.map(d => ({ rtlPhase: d.rtlPhase, rtlPhaseColor: d.rtlPhaseColor }))
+        .filter((value, index, self) => self.findIndex(t => t.rtlPhase === value.rtlPhase && t.rtlPhaseColor === value.rtlPhaseColor) === index)
+        .sort((a,b) => a.rtlPhase.localeCompare(b.rtlPhase));
 
-    // RTL Phase Legend
-    const uniqueRtlPhases = initiativesData.reduce((acc, curr) => {
-        if (!acc.find(item => item.rtlPhase === curr.rtlPhase)) {
-            acc.push({ rtlPhase: curr.rtlPhase, rtlPhaseColor: curr.rtlPhaseColor });
-        }
-        return acc;
-    }, []).sort((a,b) => a.rtlPhase.localeCompare(b.rtlPhase));
-
-    const rtlLegend = legendGroup.append("g")
-        .attr("class", "legend-rtl");
-
-    rtlLegend.append("text")
-        .attr("x", 0)
-        .attr("y", -10) 
-        .style("font-weight", "bold")
-        .style("font-size", "12px")
-        .text("RTL Phase (Color):");
-
-    const rtlLegendItems = rtlLegend.selectAll(".legend-rtl-item")
-        .data(uniqueRtlPhases)
-        .enter().append("g")
-        .attr("class", "legend-rtl-item")
-        .attr("transform", (d, i) => `translate(0, ${(i * legendItemHeight) + 10})`);
-
-    rtlLegendItems.append("rect")
-        .attr("x", 0)
-        .attr("y", (legendItemHeight - legendRectSize) / 2 - legendRectSize / 2 ) // Adjust for better centering
-        .attr("width", legendRectSize)
-        .attr("height", legendRectSize)
-        .style("fill", d => d.rtlPhaseColor);
-
-    rtlLegendItems.append("text")
-        .attr("x", legendRectSize + legendPadding)
-        .attr("y", legendItemHeight / 2  - legendRectSize / 2 + legendRectSize / 2) // Align text with center of rect
-        .attr("dy", "0.32em") 
-        .style("font-size", "10px")
-        .text(d => d.rtlPhase);
+    const rtlLegend = legendGroup.append("g").attr("class", "legend-rtl");
+    rtlLegend.append("text").attr("x", 0).attr("y", -10).style("font-weight", "bold").style("font-size", "12px").text("RTL Phase (Color):");
+    const rtlLegendItems = rtlLegend.selectAll(".legend-rtl-item").data(uniqueRtlPhases).enter().append("g")
+        .attr("class", "legend-rtl-item").attr("transform", (d, i) => `translate(0, ${(i * legendItemHeight) + 10})`);
+    rtlLegendItems.append("rect").attr("x", 0).attr("y", (legendItemHeight - legendRectSize) / 2 - legendRectSize / 2 +2 )
+        .attr("width", legendRectSize).attr("height", legendRectSize).style("fill", d => d.rtlPhaseColor);
+    rtlLegendItems.append("text").attr("x", legendRectSize + legendPadding).attr("y", legendItemHeight / 2  - legendRectSize / 2 + legendRectSize / 2 + 2)
+        .attr("dy", "0.32em").style("font-size", "10px").text(d => d.rtlPhase);
     
-    // AI Integration Level Legend
     const aiLevelsData = [
         { label: "High AI (Driven)", aiSize: 15 },
-        { label: "Medium AI (Augmented)", aiSize: 10 }
+        { label: "Medium AI (Augmented)", aiSize: 10 },
+        { label: "Standard / Low AI", aiSize: 7 } // Ensuring this is targeted by the step
     ];
-    
-    let rtlLegendCalculatedWidth = 150; // Fallback width
-    const tempText = rtlLegend.append("text").style("font-size", "10px");
+    let rtlLegendCalculatedWidth = 150; 
+    const tempText = rtlLegend.append("text").style("font-size", "10px"); // Temp for width calc
     let maxRtlTextWidth = 0;
     uniqueRtlPhases.forEach(phase => {
         tempText.text(phase.rtlPhase);
-        const Twidth = tempText.node().getComputedTextLength();
-        if (Twidth > maxRtlTextWidth) maxRtlTextWidth = Twidth;
+        try { // Robustness for headless environments if getComputedTextLength fails
+            const Twidth = tempText.node().getComputedTextLength();
+            if (Twidth > maxRtlTextWidth) maxRtlTextWidth = Twidth;
+        } catch(e) { maxRtlTextWidth = Math.max(maxRtlTextWidth, phase.rtlPhase.length * 6); console.warn('getComputedTextLength failed, estimating width.'); }
     });
     tempText.remove();
-    rtlLegendCalculatedWidth = legendRectSize + legendPadding + maxRtlTextWidth + 40; // Add buffer
+    rtlLegendCalculatedWidth = legendRectSize + legendPadding + maxRtlTextWidth + 40;
 
-    const aiLegend = legendGroup.append("g")
-        .attr("class", "legend-ai")
-        .attr("transform", `translate(${rtlLegendCalculatedWidth}, 0)`); 
-
-    aiLegend.append("text")
-        .attr("x", 0)
-        .attr("y", -10)
-        .style("font-weight", "bold")
-        .style("font-size", "12px")
-        .text("AI Integration (Size):");
-        
-    const aiLegendItems = aiLegend.selectAll(".legend-ai-item")
-        .data(aiLevelsData)
-        .enter().append("g")
-        .attr("class", "legend-ai-item")
-        .attr("transform", (d, i) => `translate(0, ${(i * (15 * 1.8)) + 10 + d.aiSize})`); // Adjusted vertical spacing
-
-    aiLegendItems.append("circle")
-        .attr("cx", d => d.aiSize) 
-        .attr("cy", 0) 
-        .attr("r", d => d.aiSize)
-        .style("fill", "#E0E0E0") 
-        .style("stroke", "#333");
-
-    aiLegendItems.append("text")
-        .attr("x", d => d.aiSize * 2 + legendPadding + 5)
-        .attr("y", 0)
-        .attr("dy", "0.35em") 
-        .style("font-size", "10px")
-        .text(d => d.label);
+    const aiLegend = legendGroup.append("g").attr("class", "legend-ai").attr("transform", `translate(${rtlLegendCalculatedWidth}, 0)`); 
+    aiLegend.append("text").attr("x", 0).attr("y", -10).style("font-weight", "bold").style("font-size", "12px").text("AI Integration (Size):");
+    const aiLegendItems = aiLegend.selectAll(".legend-ai-item").data(aiLevelsData).enter().append("g")
+        .attr("class", "legend-ai-item").attr("transform", (d, i) => `translate(0, ${(i * (15 * 1.8)) + 10 + d.aiSize})`);
+    aiLegendItems.append("circle").attr("cx", d => d.aiSize).attr("cy", 0).attr("r", d => d.aiSize).style("fill", "#E0E0E0").style("stroke", "#333");
+    aiLegendItems.append("text").attr("x", d => d.aiSize * 2 + legendPadding + 5).attr("y", 0).attr("dy", "0.35em").style("font-size", "10px").text(d => d.label);
 }
 
 document.addEventListener('DOMContentLoaded', () => {
