@@ -141,7 +141,7 @@ function getQuadrantCenterCoordinates(quadrantName, chartWidth, chartHeight) {
 }
 
 function drawBlips(svg, data, chartWidth, chartHeight) {
-    const SCATTER_FACTOR = 25; // Increased scatter factor
+    const SCATTER_FACTOR = 35; // Further increased scatter factor
     const blipItems = svg.append("g").attr("class", "blips")
         .selectAll(".blip-item")
         .data(data)
@@ -153,9 +153,9 @@ function drawBlips(svg, data, chartWidth, chartHeight) {
             const quadrantBlipData = data.filter(item => item.quadrantName === d.quadrantName);
             const indexInQuadrant = quadrantBlipData.findIndex(item => item.id === d.id);
             
-            // Adjusted base spacing for more distribution
-            const spacingX = chartWidth / 9; 
-            const spacingY = chartHeight / 9;
+            // Base spacing for patterns (reverted to /10 for tighter base grid with more scatter)
+            const spacingX = chartWidth / 10; 
+            const spacingY = chartHeight / 10;
 
             const sixItemPattern = [ 
                 { dx: -spacingX, dy: -spacingY*0.8 }, { dx: 0, dy: -spacingY*1.0 }, { dx: spacingX, dy: -spacingY*0.8 },
@@ -169,11 +169,11 @@ function drawBlips(svg, data, chartWidth, chartHeight) {
             const oneItemPattern = [{dx: 0, dy: 0}];
 
             if (d.quadrantName === "Big Bets" && indexInQuadrant < sixItemPattern.length) {
-                jitter = sixItemPattern[indexInQuadrant];
+                jitter = JSON.parse(JSON.stringify(sixItemPattern[indexInQuadrant])); // Deep copy
             } else if (quadrantBlipData.length >= 4 && indexInQuadrant < fourItemPattern.length) { 
                  jitter = JSON.parse(JSON.stringify(fourItemPattern[indexInQuadrant])); // Deep copy
             } else if (quadrantBlipData.length === 3 && indexInQuadrant < fourItemPattern.length) {
-                 jitter = JSON.parse(JSON.stringify(fourItemPattern[indexInQuadrant])); // Deep copy
+                 jitter = JSON.parse(JSON.stringify(fourItemPattern[indexInQuadrant])); // Deep copy for first 3 of 4
             } else if (quadrantBlipData.length === 2 && indexInQuadrant < twoItemPattern.length) {
                  jitter = JSON.parse(JSON.stringify(twoItemPattern[indexInQuadrant])); // Deep copy
             } else if (quadrantBlipData.length === 1 && indexInQuadrant < oneItemPattern.length) {
@@ -181,7 +181,7 @@ function drawBlips(svg, data, chartWidth, chartHeight) {
             }
 
             // Add random scatter to the determined jitter position
-            if (quadrantBlipData.length > 0) { // Apply scatter to all items if more than 0 (or based on specific factor)
+            if (quadrantBlipData.length > 0) { 
                  jitter.dx += (Math.random() * SCATTER_FACTOR - SCATTER_FACTOR / 2);
                  jitter.dy += (Math.random() * SCATTER_FACTOR - SCATTER_FACTOR / 2);
             }
