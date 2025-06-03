@@ -233,10 +233,19 @@ function drawLegends(svg, chartWidth, chartHeight) {
             return `translate(${xPos}, ${yPos})`;
         });
 
-    rtlLegendItems.append("rect").attr("x", 0).attr("y", (legendItemHeight - legendRectSize) / 2 - legendRectSize / 2 +2 )
-        .attr("width", legendRectSize).attr("height", legendRectSize).style("fill", d => d.rtlPhaseColor);
-    rtlLegendItems.append("text").attr("x", legendRectSize + legendPadding).attr("y", legendItemHeight / 2  - legendRectSize / 2 + legendRectSize / 2 + 2)
-        .attr("dy", "0.32em").style("font-size", "10px").text(d => d.rtlPhase);
+    rtlLegendItems.append("rect")
+        .attr("x", 0)
+        .attr("y", (legendItemHeight - legendRectSize) / 2 ) // Centering rect vertically
+        .attr("width", legendRectSize)
+        .attr("height", legendRectSize)
+        .style("fill", d => d.rtlPhaseColor);
+
+    rtlLegendItems.append("text")
+        .attr("x", legendRectSize + legendPadding)
+        .attr("y", legendItemHeight / 2) // Align text's baseline to midpoint of item height
+        .attr("dominant-baseline", "middle") // Vertically center text using baseline
+        .style("font-size", "10px")
+        .text(d => d.rtlPhase);
     
     const aiLevelsData = [
         { label: "High AI (Driven)", aiSize: 15 },
@@ -244,7 +253,7 @@ function drawLegends(svg, chartWidth, chartHeight) {
         { label: "Standard / Low AI", aiSize: 7 } 
     ];
     
-    const totalRtlLegendWidthActual = (numColumnsRtl * rtlColumnWidth) + ((numColumnsRtl - 1) * interColumnGapRtl) - interColumnGapRtl; // More precise width
+    const totalRtlLegendWidthActual = (numColumnsRtl * rtlColumnWidth) + ((numColumnsRtl - 1) * interColumnGapRtl) - interColumnGapRtl;
 
     const aiLegend = legendGroup.append("g").attr("class", "legend-ai")
                            .attr("transform", `translate(${totalRtlLegendWidthActual + 40}, 0)`);
