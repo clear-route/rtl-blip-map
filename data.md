@@ -236,7 +236,7 @@ The matrix plots initiatives based on **Expected Business Value / Strategic Impa
 *   **Label:** "Header-based Routing (Mocks)"
 *   **RTL Phase:** Testing
 *   **Color:** Royal Blue (#4169E1)
-*   **AI Integration:** Low (Size: Small - 7px radius)
+*   **AI Integration:** Low / Standard (Size: Small - 7px radius)
 *   **Value/Impact:** High
 *   **Effort/Complexity:** Low (Moved from Medium)
 *   **Assigned Quadrant:** **Quick Wins**
