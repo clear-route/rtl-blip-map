@@ -1,5 +1,4 @@
 const initiativesData = [
-    // Original 8 AI-focused initiatives
     {
         id: "mno_predict_heal", label: "AI M&O: Predict & Heal", valueCategory: "High", effortCategory: "High",
         rtlPhase: "Monitoring & Observability", rtlPhaseColor: "#4B0082", aiLevel: "High", aiSize: 15, quadrantName: "Big Bets"
@@ -20,10 +19,9 @@ const initiativesData = [
         id: "testing_data_prioritize", label: "AI Testing: Data & Prioritize", valueCategory: "High", effortCategory: "High",
         rtlPhase: "Testing", rtlPhaseColor: "#4169E1", aiLevel: "High", aiSize: 15, quadrantName: "Big Bets"
     },
-    // MOVED to Quick Wins
     {
-        id: "dev_codegen_validate", label: "AI Dev: Code Gen & Validate", valueCategory: "High", effortCategory: "Low", // Effort changed to Low
-        rtlPhase: "Development", rtlPhaseColor: "#228B22", aiLevel: "Medium", aiSize: 7, quadrantName: "Quick Wins" // Moved to QW, size adjusted
+        id: "dev_codegen_validate", label: "AI Dev: Code Gen & Validate", valueCategory: "High", effortCategory: "Low",
+        rtlPhase: "Development", rtlPhaseColor: "#228B22", aiLevel: "Medium", aiSize: 7, quadrantName: "Quick Wins"
     },
     {
         id: "build_analyze_select", label: "AI Build: Analyze & Select", valueCategory: "Medium", effortCategory: "Medium",
@@ -33,7 +31,6 @@ const initiativesData = [
         id: "ideation_feasibility_scan", label: "AI Ideation: Feasibility Scan", valueCategory: "Medium", effortCategory: "Medium",
         rtlPhase: "Ideation & Planning", rtlPhaseColor: "#FFA500", aiLevel: "Medium", aiSize: 10, quadrantName: "Fill-ins / Incrementals"
     },
-    // Previously added 3 initiatives (from first modification round)
     {
         id: "qw_api_testing_prev", label: "Focused API Testing Adoption", valueCategory: "High", effortCategory: "Low", 
         rtlPhase: "Test", rtlPhaseColor: "#4169E1", aiLevel: "Low", aiSize: 7, quadrantName: "Quick Wins" 
@@ -46,7 +43,6 @@ const initiativesData = [
         id: "ts_microservices_prev", label: "Hasty Microservices Migration", valueCategory: "Low", effortCategory: "High", 
         rtlPhase: "Platform", rtlPhaseColor: "#800080", aiLevel: "Low", aiSize: 7, quadrantName: "Time Sinks / Reconsider" 
     },
-    // New 7 initiatives for >=4 per quadrant goal
     {
         id: "qw_refine_test_strategy", label: "Refine Test Strategy Doc", valueCategory: "High", effortCategory: "Low",
         rtlPhase: "Test", rtlPhaseColor: "#4169E1", aiLevel: "Low", aiSize: 7, quadrantName: "Quick Wins"
@@ -55,7 +51,6 @@ const initiativesData = [
         id: "qw_secrets_vault", label: "Basic Secrets Vault Setup", valueCategory: "High", effortCategory: "Low",
         rtlPhase: "Secure", rtlPhaseColor: "#8A2BE2", aiLevel: "Low", aiSize: 7, quadrantName: "Quick Wins"
     },
-    // CHANGED label
     {
         id: "fi_dev_hub_mvp", label: "Launch Internal Developer Platform (MVP)", valueCategory: "Medium", effortCategory: "Medium",
         rtlPhase: "Development", rtlPhaseColor: "#228B22", aiLevel: "Low", aiSize: 7, quadrantName: "Fill-ins / Incrementals"
@@ -72,9 +67,6 @@ const initiativesData = [
         id: "ts_overcustom_cots", label: "Over-customizing COTS Tools", valueCategory: "Low", effortCategory: "High",
         rtlPhase: "Platform", rtlPhaseColor: "#800080", aiLevel: "Low", aiSize: 7, quadrantName: "Time Sinks / Reconsider"
     },
-    // REMOVED ts_blind_automation
-
-    // ADDED initiatives
     {
         id: "fi_ai_code_reviews", label: "AI Assisted Code Reviews", valueCategory: "Medium", effortCategory: "Medium",
         rtlPhase: "Development", rtlPhaseColor: "#228B22", aiLevel: "Medium", aiSize: 10, quadrantName: "Fill-ins / Incrementals"
@@ -88,8 +80,8 @@ const initiativesData = [
         rtlPhase: "Environments", rtlPhaseColor: "#800080", aiLevel: "Low", aiSize: 7, quadrantName: "Big Bets"
     },
     {
-        id: "bb_header_routing_mocks", label: "Header-based Routing (Mocks)", valueCategory: "High", effortCategory: "Medium",
-        rtlPhase: "Testing", rtlPhaseColor: "#4169E1", aiLevel: "Low", aiSize: 7, quadrantName: "Big Bets"
+        id: "bb_header_routing_mocks", label: "Header-based Routing (Mocks)", valueCategory: "High", effortCategory: "Low", // MOVED
+        rtlPhase: "Testing", rtlPhaseColor: "#4169E1", aiLevel: "Low", aiSize: 7, quadrantName: "Quick Wins" // MOVED
     }
 ];
 
@@ -172,6 +164,11 @@ function drawBlips(svg, data, chartWidth, chartHeight) {
             const spacingX = chartWidth / 8; 
             const spacingY = chartHeight / 8;
 
+            const eightItemPattern = [
+                { dx: -spacingX*1.2, dy: -spacingY }, { dx: 0, dy: -spacingY*1.2 }, { dx: spacingX*1.2, dy: -spacingY },
+                { dx: -spacingX*0.8, dy: 0 }, { dx: spacingX*0.8, dy: 0 },
+                { dx: -spacingX*1.2, dy: spacingY }, { dx: 0, dy: spacingY*1.2 }, { dx: spacingX*1.2, dy: spacingY },
+            ];
             const sixItemPattern = [ 
                 { dx: -spacingX, dy: -spacingY*1.0 }, { dx: 0, dy: -spacingY*1.2 }, { dx: spacingX, dy: -spacingY*1.0 }, 
                 { dx: -spacingX, dy: spacingY*0.8 },  { dx: 0, dy: spacingY*1.0 },  { dx: spacingX, dy: spacingY*0.8 }  
@@ -190,11 +187,11 @@ function drawBlips(svg, data, chartWidth, chartHeight) {
                 { dx: -spacingX*0.7, dy: spacingY*0.7 }, 
                 { dx: spacingX*0.7, dy: spacingY*0.7 }   
             ];
-            const twoItemPattern = [{ dx: -spacingX*0.6, dy: 0 }, { dx: spacingX*0.6, dy: 0 }]; 
-            const oneItemPattern = [{dx: 0, dy: 0}];
 
-            // Logic to select pattern based on number of items in the quadrant
-            if (quadrantBlipData.length >= 6) {
+            // This logic needs to be updated to handle the new counts per quadrant
+            if (quadrantBlipData.length >= 8) {
+                jitter = JSON.parse(JSON.stringify(eightItemPattern[indexInQuadrant % eightItemPattern.length]));
+            } else if (quadrantBlipData.length >= 6) {
                  jitter = JSON.parse(JSON.stringify(sixItemPattern[indexInQuadrant % sixItemPattern.length])); 
             } else if (quadrantBlipData.length === 5) {
                  jitter = JSON.parse(JSON.stringify(fiveItemPattern[indexInQuadrant])); 
@@ -202,18 +199,16 @@ function drawBlips(svg, data, chartWidth, chartHeight) {
                  jitter = JSON.parse(JSON.stringify(fourItemPattern[indexInQuadrant])); 
             } else if (quadrantBlipData.length === 3) {
                  jitter = JSON.parse(JSON.stringify(threeItemPattern[indexInQuadrant]));
-            } else if (quadrantBlipData.length === 2) {
-                 jitter = JSON.parse(JSON.stringify(twoItemPattern[indexInQuadrant])); 
-            } else if (quadrantBlipData.length === 1) {
-                 jitter = JSON.parse(JSON.stringify(oneItemPattern[indexInQuadrant])); 
+            } else {
+                 jitter = {dx:0, dy:0}; // Default for 1 or 2 items to be at center before nudges
             }
             
             // Specific individual blip adjustments
-            if (d.id === "envs_forecast_selfserve") { jitter.dx += 15; jitter.dy -= 15; }
-            if (d.id === "deploy_risk_canary") { jitter.dy -= 20; } // Cumulative up
-            if (d.id === "qw_api_testing_prev") { jitter.dy -= 10; }
-            if (d.id === "ts_microservices_prev") { jitter.dx -= 10; jitter.dy -= 10; }
-            if (d.id === "build_analyze_select") { jitter.dy -= 8; }
+            if (d.id === "mno_predict_heal") { jitter.dy += 15; jitter.dx -= 15; }
+            if (d.id === "bb_ephemeral_envs") { jitter.dy -= 15; }
+            if (d.id === "qw_golden_paths_prev") { jitter.dx += 50; }
+            if (d.id === "bb_header_routing_mocks") { jitter.dx = -spacingX * 0.5; jitter.dy = 5; } // Override pattern to be middle-left
+
 
             return `translate(${baseCoords.x + jitter.dx}, ${baseCoords.y + jitter.dy})`;
         });
