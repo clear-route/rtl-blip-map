@@ -51,9 +51,10 @@ const initiativesData = [
         id: "qw_secrets_vault", label: "Basic Secrets Vault Setup", valueCategory: "High", effortCategory: "Low",
         rtlPhase: "Secure", rtlPhaseColor: "#8A2BE2", aiLevel: "Low", aiSize: 7, quadrantName: "Quick Wins"
     },
+    // MOVED to Big Bets
     {
-        id: "fi_dev_hub_mvp", label: "Launch Internal Developer Platform (MVP)", valueCategory: "Medium", effortCategory: "Medium",
-        rtlPhase: "Development", rtlPhaseColor: "#228B22", aiLevel: "Low", aiSize: 7, quadrantName: "Fill-ins / Incrementals"
+        id: "fi_dev_hub_mvp", label: "Launch Internal Developer Platform (MVP)", valueCategory: "High", effortCategory: "Medium",
+        rtlPhase: "Development", rtlPhaseColor: "#228B22", aiLevel: "Low", aiSize: 7, quadrantName: "Big Bets"
     },
     {
         id: "fi_optimize_ci_pipeline", label: "Optimize Key CI Pipeline", valueCategory: "Medium", effortCategory: "Medium",
@@ -80,8 +81,8 @@ const initiativesData = [
         rtlPhase: "Environments", rtlPhaseColor: "#800080", aiLevel: "Low", aiSize: 7, quadrantName: "Big Bets"
     },
     {
-        id: "bb_header_routing_mocks", label: "Header-based Routing (Mocks)", valueCategory: "High", effortCategory: "Low", // MOVED
-        rtlPhase: "Testing", rtlPhaseColor: "#4169E1", aiLevel: "Low", aiSize: 7, quadrantName: "Quick Wins" // MOVED
+        id: "bb_header_routing_mocks", label: "Header-based Routing (Mocks)", valueCategory: "High", effortCategory: "Low",
+        rtlPhase: "Testing", rtlPhaseColor: "#4169E1", aiLevel: "Low", aiSize: 7, quadrantName: "Quick Wins"
     }
 ];
 
@@ -169,45 +170,37 @@ function drawBlips(svg, data, chartWidth, chartHeight) {
                 { dx: -spacingX*0.8, dy: 0 }, { dx: spacingX*0.8, dy: 0 },
                 { dx: -spacingX*1.2, dy: spacingY }, { dx: 0, dy: spacingY*1.2 }, { dx: spacingX*1.2, dy: spacingY },
             ];
-            const sixItemPattern = [ 
+            const sevenItemPattern = [
                 { dx: -spacingX, dy: -spacingY*1.0 }, { dx: 0, dy: -spacingY*1.2 }, { dx: spacingX, dy: -spacingY*1.0 }, 
-                { dx: -spacingX, dy: spacingY*0.8 },  { dx: 0, dy: spacingY*1.0 },  { dx: spacingX, dy: spacingY*0.8 }  
-            ];
-            const fourItemPattern = [ 
-                { dx: -spacingX*0.7, dy: -spacingY*0.9 }, { dx: spacingX*0.7, dy: -spacingY*0.9 }, 
-                { dx: -spacingX*0.7, dy: spacingY*0.7 },  { dx: spacingX*0.7, dy: spacingY*0.7 }  
-            ];
-             const fiveItemPattern = [ 
-                { dx: -spacingX*0.7, dy: -spacingY*0.9 }, { dx: spacingX*0.7, dy: -spacingY*0.9 }, 
-                { dx: 0, dy: 0 },
-                { dx: -spacingX*0.7, dy: spacingY*0.7 },  { dx: spacingX*0.7, dy: spacingY*0.7 }  
-            ];
-            const threeItemPattern = [
-                { dx: 0, dy: -spacingY*0.9 }, 
-                { dx: -spacingX*0.7, dy: spacingY*0.7 }, 
-                { dx: spacingX*0.7, dy: spacingY*0.7 }   
+                { dx: -spacingX*0.5, dy: 0 },  { dx: spacingX*0.5, dy: 0 },
+                { dx: -spacingX, dy: spacingY*1.0 }, { dx: spacingX, dy: spacingY*1.0 }
             ];
 
-            // This logic needs to be updated to handle the new counts per quadrant
             if (quadrantBlipData.length >= 8) {
                 jitter = JSON.parse(JSON.stringify(eightItemPattern[indexInQuadrant % eightItemPattern.length]));
-            } else if (quadrantBlipData.length >= 6) {
-                 jitter = JSON.parse(JSON.stringify(sixItemPattern[indexInQuadrant % sixItemPattern.length])); 
-            } else if (quadrantBlipData.length === 5) {
-                 jitter = JSON.parse(JSON.stringify(fiveItemPattern[indexInQuadrant])); 
-            } else if (quadrantBlipData.length === 4) {
-                 jitter = JSON.parse(JSON.stringify(fourItemPattern[indexInQuadrant])); 
-            } else if (quadrantBlipData.length === 3) {
-                 jitter = JSON.parse(JSON.stringify(threeItemPattern[indexInQuadrant]));
+            } else if (quadrantBlipData.length === 7) {
+                 jitter = JSON.parse(JSON.stringify(sevenItemPattern[indexInQuadrant % sevenItemPattern.length])); 
             } else {
-                 jitter = {dx:0, dy:0}; // Default for 1 or 2 items to be at center before nudges
+                // Fallback to simpler patterns for fewer items
+                const patterns = {
+                    6: [ { dx: -spacingX, dy: -spacingY*1.0 }, { dx: 0, dy: -spacingY*1.2 }, { dx: spacingX, dy: -spacingY*1.0 }, { dx: -spacingX, dy: spacingY*0.8 },  { dx: 0, dy: spacingY*1.0 },  { dx: spacingX, dy: spacingY*0.8 } ],
+                    5: [ { dx: -spacingX*0.7, dy: -spacingY*0.9 }, { dx: spacingX*0.7, dy: -spacingY*0.9 }, { dx: 0, dy: 0 }, { dx: -spacingX*0.7, dy: spacingY*0.7 }, { dx: spacingX*0.7, dy: spacingY*0.7 } ],
+                    4: [ { dx: -spacingX*0.7, dy: -spacingY*0.9 }, { dx: spacingX*0.7, dy: -spacingY*0.9 }, { dx: -spacingX*0.7, dy: spacingY*0.7 },  { dx: spacingX*0.7, dy: spacingY*0.7 } ],
+                    3: [ { dx: 0, dy: -spacingY*0.9 }, { dx: -spacingX*0.7, dy: spacingY*0.7 }, { dx: spacingX*0.7, dy: spacingY*0.7 } ],
+                    2: [ { dx: -spacingX*0.6, dy: 0 }, { dx: spacingX*0.6, dy: 0 } ],
+                    1: [ { dx: 0, dy: 0 } ]
+                };
+                const pattern = patterns[quadrantBlipData.length] || [{dx:0, dy:0}];
+                jitter = JSON.parse(JSON.stringify(pattern[indexInQuadrant % pattern.length]));
             }
             
             // Specific individual blip adjustments
-            if (d.id === "mno_predict_heal") { jitter.dy += 15; jitter.dx -= 15; }
+            if (d.id === "mno_predict_heal") { jitter.dy += 25; jitter.dx -= 25; } // More down and left
             if (d.id === "bb_ephemeral_envs") { jitter.dy -= 15; }
             if (d.id === "qw_golden_paths_prev") { jitter.dx += 50; }
-            if (d.id === "bb_header_routing_mocks") { jitter.dx = -spacingX * 0.5; jitter.dy = 5; } // Override pattern to be middle-left
+            if (d.id === "bb_header_routing_mocks") { jitter.dx = -spacingX * 0.8; jitter.dy = 5; } // further left
+            if (d.id === "ts_manual_regression") { jitter.dy -= 15; } // up a bit
+            if (d.id === "ts_overcustom_cots") { jitter.dy += 15; } // down a bit
 
 
             return `translate(${baseCoords.x + jitter.dx}, ${baseCoords.y + jitter.dy})`;

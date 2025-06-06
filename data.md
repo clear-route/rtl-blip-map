@@ -155,14 +155,14 @@ The matrix plots initiatives based on **Expected Business Value / Strategic Impa
 
 ---
 
-### 14. Initiative: Launch Internal Developer Platform (MVP) (CHANGED)
+### 14. Initiative: Launch Internal Developer Platform (MVP) (MOVED)
 *   **Label:** "Launch Internal Developer Platform (MVP)"
 *   **RTL Phase:** Development 
 *   **Color:** Forest Green (#228B22)
 *   **AI Integration:** Low / Standard (Size: Small - 7px radius)
-*   **Value/Impact:** Medium
+*   **Value/Impact:** High (Moved from Medium)
 *   **Effort/Complexity:** Medium
-*   **Assigned Quadrant:** **Fill-ins / Incrementals**
+*   **Assigned Quadrant:** **Big Bets**
 
 ---
 
