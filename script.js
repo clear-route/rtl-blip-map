@@ -48,7 +48,7 @@ const initiativesData = [
         rtlPhase: "Test", rtlPhaseColor: "#4169E1", aiLevel: "Low", aiSize: 7, quadrantName: "Quick Wins"
     },
     {
-        id: "qw_secrets_vault", label: "Secrets Vault Setup", valueCategory: "High", effortCategory: "Low", // CHANGED wording
+        id: "qw_secrets_vault", label: "Secrets Vault Setup", valueCategory: "High", effortCategory: "Low",
         rtlPhase: "Secure", rtlPhaseColor: "#8A2BE2", aiLevel: "Low", aiSize: 7, quadrantName: "Quick Wins"
     },
     {
@@ -188,7 +188,9 @@ function drawBlips(svg, data, chartWidth, chartHeight) {
             jitter = JSON.parse(JSON.stringify(pattern[indexInQuadrant % pattern.length]));
             
             // Specific individual blip adjustments
-            if (d.id === "qw_agentic_devsecops") { jitter.dx = 0; jitter.dy = -spacingY * 1.3; } // Position at top-middle
+            if (d.id === "qw_refine_test_strategy") { jitter.dx -= 25; }
+            if (d.id === "qw_secrets_vault") { jitter.dy += 25; }
+            if (d.id === "qw_agentic_devsecops") { jitter.dx = spacingX * 1.1; jitter.dy = 0; } // All the way right, middle vertically
 
             return `translate(${baseCoords.x + jitter.dx}, ${baseCoords.y + jitter.dy})`;
         });
