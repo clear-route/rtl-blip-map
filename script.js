@@ -132,4 +132,160 @@ function drawQuadrants(svg, chartWidth, chartHeight) {
     const xMidPoint = chartWidth / 2;
     const yMidPoint = chartHeight / 2;
     svg.append("line").attr("x1", xMidPoint).attr("y1", 0).attr("x2", xMidPoint).attr("y2", chartHeight).attr("stroke", "#ccc").attr("stroke-dasharray", "5,5");
-    svg.append("line
+    svg.append("line").attr("x1", 0).attr("y1", yMidPoint).attr("x2", chartWidth).attr("y2", yMidPoint).attr("stroke", "#ccc").attr("stroke-dasharray", "5,5");
+    const labelData = [
+        { x: chartWidth * 0.25, y: chartHeight * 0.25, main: "Time Sinks / Reconsider", sub: "(Low Value, High Effort)" },
+        { x: chartWidth * 0.75, y: chartHeight * 0.25, main: "Big Bets", sub: "(High Value, High Effort)" },
+        { x: chartWidth * 0.25, y: chartHeight * 0.75, main: "Fill-ins / Incrementals", sub: "(Medium Value, Medium Effort)" },
+        { x: chartWidth * 0.75, y: chartHeight * 0.75, main: "Quick Wins", sub: "(High Value, Low Effort)" }
+    ];
+    labelData.forEach(ld => {
+        svg.append("text").attr("class", "quadrant-label")
+            .attr("x", ld.x).attr("y", ld.y - 10).attr("text-anchor", "middle").text(ld.main);
+        svg.append("text").attr("class", "quadrant-sublabel")
+            .attr("x", ld.x).attr("y", ld.y + 8).attr("text-anchor", "middle").style("font-size", "10px").text(ld.sub);
+    });
+}
+
+function getQuadrantCenterCoordinates(quadrantName, chartWidth, chartHeight) {
+    const centers = {
+        "Big Bets": { x: chartWidth * 0.75, y: chartHeight * 0.25 },
+        "Fill-ins / Incrementals": { x: chartWidth * 0.25, y: chartHeight * 0.75 },
+        "Quick Wins": { x: chartWidth * 0.75, y: chartHeight * 0.75 },
+        "Time Sinks / Reconsider": { x: chartWidth * 0.25, y: chartHeight * 0.25 }
+    };
+    return centers[quadrantName] || { x: chartWidth / 2, y: chartHeight / 2 };
+}
+
+function drawBlips(svg, data, chartWidth, chartHeight) {
+    const blipItems = svg.append("g").attr("class", "blips")
+        .selectAll(".blip-item")
+        .data(data)
+        .enter().append("g")
+        .attr("class", "blip-item")
+        .attr("transform", d => {
+            const baseCoords = getQuadrantCenterCoordinates(d.quadrantName, chartWidth, chartHeight);
+            let jitter = {dx: 0, dy: 0};
+            const quadrantBlipData = data.filter(item => item.quadrantName === d.quadrantName);
+            const indexInQuadrant = quadrantBlipData.findIndex(item => item.id === d.id);
+
+            const spacingX = chartWidth / 8; 
+            const spacingY = chartHeight / 8;
+
+            const patterns = {
+                10: [ { dx: -spacingX*1.2, dy: -spacingY*1.2 }, { dx: 0, dy: -spacingY*1.2 }, { dx: spacingX*1.2, dy: -spacingY*1.2 }, { dx: -spacingX*0.6, dy: 0 }, { dx: spacingX*0.6, dy: 0 }, { dx: -spacingX*1.2, dy: spacingY*1.2 }, { dx: 0, dy: spacingY*1.2 }, { dx: spacingX*1.2, dy: spacingY*1.2 }, { dx: -spacingX*1.2, dy: -spacingY*0.6 }, { dx: spacingX*1.2, dy: -spacingY*0.6 } ],
+                9: [ { dx: -spacingX*1.2, dy: -spacingY*1.2 }, { dx: 0, dy: -spacingY*1.2 }, { dx: spacingX*1.2, dy: -spacingY*1.2 }, { dx: -spacingX*1.2, dy: 0 }, { dx: 0, dy: 0 }, { dx: spacingX*1.2, dy: 0 }, { dx: -spacingX*1.2, dy: spacingY*1.2 }, { dx: 0, dy: spacingY*1.2 }, { dx: spacingX*1.2, dy: spacingY*1.2 } ],
+                8: [ { dx: -spacingX*1.2, dy: -spacingY }, { dx: 0, dy: -spacingY*1.2 }, { dx: spacingX*1.2, dy: -spacingY }, { dx: -spacingX*0.8, dy: 0 }, { dx: spacingX*0.8, dy: 0 }, { dx: -spacingX*1.2, dy: spacingY }, { dx: 0, dy: spacingY*1.2 }, { dx: spacingX*1.2, dy: spacingY } ],
+                7: [ { dx: -spacingX, dy: -spacingY*1.0 }, { dx: 0, dy: -spacingY*1.2 }, { dx: spacingX, dy: -spacingY*1.0 }, { dx: -spacingX*0.5, dy: 0 },  { dx: spacingX*0.5, dy: 0 }, { dx: -spacingX, dy: spacingY*1.0 }, { dx: spacingX, dy: spacingY*1.0 } ],
+                6: [ { dx: -spacingX, dy: -spacingY*1.0 }, { dx: 0, dy: -spacingY*1.2 }, { dx: spacingX, dy: -spacingY*1.0 }, { dx: -spacingX, dy: spacingY*0.8 },  { dx: 0, dy: spacingY*1.0 },  { dx: spacingX, dy: spacingY*0.8 } ],
+                5: [ { dx: -spacingX*0.7, dy: -spacingY*0.9 }, { dx: spacingX*0.7, dy: -spacingY*0.9 }, { dx: 0, dy: 0 }, { dx: -spacingX*0.7, dy: spacingY*0.7 }, { dx: spacingX*0.7, dy: spacingY*0.7 } ],
+                4: [ { dx: -spacingX*0.7, dy: -spacingY*0.9 }, { dx: spacingX*0.7, dy: -spacingY*0.9 }, { dx: -spacingX*0.7, dy: spacingY*0.7 },  { dx: spacingX*0.7, dy: spacingY*0.7 } ],
+                3: [ { dx: 0, dy: -spacingY*0.9 }, { dx: -spacingX*0.7, dy: spacingY*0.7 }, { dx: spacingX*0.7, dy: spacingY*0.7 } ],
+                2: [ { dx: -spacingX*0.6, dy: 0 }, { dx: spacingX*0.6, dy: 0 } ],
+                1: [ { dx: 0, dy: 0 } ]
+            };
+            const pattern = patterns[quadrantBlipData.length] || [{dx:0, dy:0}];
+            jitter = JSON.parse(JSON.stringify(pattern[indexInQuadrant % pattern.length]));
+            
+            // Specific individual blip adjustments
+            if (d.id === "qw_secrets_vault") { jitter.dy += 45; }
+            if (d.id === "bb_auto_release_docs") { jitter.dy -= 25; }
+
+            return `translate(${baseCoords.x + jitter.dx}, ${baseCoords.y + jitter.dy})`;
+        });
+
+    blipItems.append("circle")
+        .attr("r", d => d.aiSize)
+        .style("fill", d => d.rtlPhaseColor)
+        .style("stroke", "#333")
+        .style("stroke-width", "1.5px");
+
+    blipItems.append("text")
+        .attr("class", "blip-label")
+        .attr("y", d => d.aiSize + 14) 
+        .attr("text-anchor", "middle")
+        .style("font-size", "9px") 
+        .text(d => d.label);
+}
+
+function drawLegends(svg, chartWidth, chartHeight) {
+    const legendItemHeight = 22;
+    const legendPadding = 8;
+    const legendRectSize = 15;
+    const legendGroup = svg.append("g").attr("class", "legends-group")
+                           .attr("transform", `translate(0, ${chartHeight + 70})`);
+    const uniqueRtlPhases = initiativesData.map(d => ({ rtlPhase: d.rtlPhase, rtlPhaseColor: d.rtlPhaseColor }))
+        .filter((value, index, self) => self.findIndex(t => t.rtlPhase === value.rtlPhase && t.rtlPhaseColor === value.rtlPhaseColor) === index)
+        .sort((a,b) => a.rtlPhase.localeCompare(b.rtlPhase));
+
+    const rtlLegend = legendGroup.append("g").attr("class", "legend-rtl");
+    rtlLegend.append("text").attr("x", 0).attr("y", -10).style("font-weight", "bold").style("font-size", "12px").text("RTL Phase (Color):");
+    
+    const numColumnsRtl = 3;
+    const itemsPerRtlColumn = Math.ceil(uniqueRtlPhases.length / numColumnsRtl);
+    let rtlColumnWidth = 0;
+    const tempTextForWidthCalc = rtlLegend.append("text").style("font-size", "10px").style("visibility", "hidden");
+    uniqueRtlPhases.forEach((phase) => {
+        tempTextForWidthCalc.text(phase.rtlPhase);
+        try {
+            const textWidth = tempTextForWidthCalc.node().getComputedTextLength();
+            if (textWidth > rtlColumnWidth) rtlColumnWidth = textWidth;
+        } catch(e) {
+            rtlColumnWidth = Math.max(rtlColumnWidth, phase.rtlPhase.length * 6); 
+            console.warn('getComputedTextLength failed for RTL legend width, estimating.');
+        }
+    });
+    tempTextForWidthCalc.remove();
+    rtlColumnWidth += legendRectSize + legendPadding + 15; 
+    const interColumnGapRtl = 20;
+
+    const rtlLegendItems = rtlLegend.selectAll(".legend-rtl-item").data(uniqueRtlPhases).enter().append("g")
+        .attr("class", "legend-rtl-item")
+        .attr("transform", (d, i) => {
+            const colIndex = Math.floor(i / itemsPerRtlColumn);
+            const itemIndexInCol = i % itemsPerRtlColumn;
+            const xPos = colIndex * (rtlColumnWidth + interColumnGapRtl);
+            const yPos = (itemIndexInCol * legendItemHeight) + 10;
+            return `translate(${xPos}, ${yPos})`;
+        });
+
+    rtlLegendItems.append("rect")
+        .attr("x", 0)
+        .attr("y", (legendItemHeight - legendRectSize) / 2 )
+        .attr("width", legendRectSize)
+        .attr("height", legendRectSize)
+        .style("fill", d => d.rtlPhaseColor);
+
+    rtlLegendItems.append("text")
+        .attr("x", legendRectSize + legendPadding)
+        .attr("y", legendItemHeight / 2) 
+        .attr("dominant-baseline", "middle") 
+        .style("font-size", "10px")
+        .text(d => d.rtlPhase);
+    
+    const aiLevelsData = [
+        { label: "High AI (Driven)", aiSize: 15 },
+        { label: "Medium AI (Augmented)", aiSize: 10 },
+        { label: "Standard / Low AI", aiSize: 7 } 
+    ];
+    
+    const totalRtlLegendWidthActual = (numColumnsRtl * rtlColumnWidth) + ((numColumnsRtl - 1) * interColumnGapRtl) - interColumnGapRtl;
+
+    const aiLegend = legendGroup.append("g").attr("class", "legend-ai")
+                           .attr("transform", `translate(${totalRtlLegendWidthActual + 40}, 0)`);
+    aiLegend.append("text").attr("x", 0).attr("y", -10).style("font-weight", "bold").style("font-size", "12px").text("AI Integration (Size):");
+    const aiLegendItems = aiLegend.selectAll(".legend-ai-item").data(aiLevelsData).enter().append("g")
+        .attr("class", "legend-ai-item").attr("transform", (d, i) => `translate(0, ${(i * (Math.max(...aiLevelsData.map(l => l.aiSize)) * 1.5 + legendItemHeight * 0.4)) + 10 + d.aiSize})`);
+    aiLegendItems.append("circle").attr("cx", d => d.aiSize).attr("cy", 0).attr("r", d => d.aiSize).style("fill", "#E0E0E0").style("stroke", "#333");
+    aiLegendItems.append("text").attr("x", d => d.aiSize * 2 + legendPadding + 5).attr("y", 0).attr("dy", "0.35em").style("font-size", "10px").text(d => d.label);
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+    console.log('DOM fully loaded. Initiatives data:', initiativesData);
+    const svg = setupChart();
+    const { xScale, yScale } = defineScales(width, height);
+    drawAxes(svg, xScale, yScale, width, height);
+    drawQuadrants(svg, width, height);
+    drawBlips(svg, initiativesData, width, height);
+    drawLegends(svg, width, height);
+});
