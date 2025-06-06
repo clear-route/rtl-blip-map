@@ -240,3 +240,25 @@ The matrix plots initiatives based on **Expected Business Value / Strategic Impa
 *   **Value/Impact:** High
 *   **Effort/Complexity:** Low (Moved from Medium)
 *   **Assigned Quadrant:** **Quick Wins**
+ 
+---
+
+### 22. Initiative: Pilot DevSecOps Agentic use cases (NEW)
+*   **Label:** "Pilot DevSecOps Agentic Use Cases"
+*   **RTL Phase:** Secure
+*   **Color:** BlueViolet (#8A2BE2)
+*   **AI Integration:** Medium (Size: Medium - 10px radius)
+*   **Value/Impact:** High 
+*   **Effort/Complexity:** Low
+*   **Assigned Quadrant:** **Quick Wins**
+
+---
+
+### 23. Initiative: Observable, Traceable Agentic Platform (NEW)
+*   **Label:** "Observable, Traceable Agentic Platform"
+*   **RTL Phase:** Platform
+*   **Color:** Deep Purple (#800080)
+*   **AI Integration:** High (Size: Large - 15px radius)
+*   **Value/Impact:** High
+*   **Effort/Complexity:** High
+*   **Assigned Quadrant:** **Big Bets**

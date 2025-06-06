@@ -48,7 +48,7 @@ const initiativesData = [
         rtlPhase: "Test", rtlPhaseColor: "#4169E1", aiLevel: "Low", aiSize: 7, quadrantName: "Quick Wins"
     },
     {
-        id: "qw_secrets_vault", label: "Secrets Vault Setup", valueCategory: "High", effortCategory: "Low", // CHANGED wording
+        id: "qw_secrets_vault", label: "Secrets Vault Setup", valueCategory: "High", effortCategory: "Low",
         rtlPhase: "Secure", rtlPhaseColor: "#8A2BE2", aiLevel: "Low", aiSize: 7, quadrantName: "Quick Wins"
     },
     {
@@ -82,6 +82,15 @@ const initiativesData = [
     {
         id: "bb_header_routing_mocks", label: "Header-based Routing (Mocks)", valueCategory: "High", effortCategory: "Low",
         rtlPhase: "Testing", rtlPhaseColor: "#4169E1", aiLevel: "Low", aiSize: 7, quadrantName: "Quick Wins"
+    },
+    // New Agentic Use Cases
+    {
+        id: "qw_agentic_devsecops", label: "Pilot DevSecOps Agentic Use Cases", valueCategory: "High", effortCategory: "Low",
+        rtlPhase: "Secure", rtlPhaseColor: "#8A2BE2", aiLevel: "Medium", aiSize: 10, quadrantName: "Quick Wins"
+    },
+    {
+        id: "bb_agentic_platform", label: "Observable, Traceable Agentic Platform", valueCategory: "High", effortCategory: "High",
+        rtlPhase: "Platform", rtlPhaseColor: "#800080", aiLevel: "High", aiSize: 15, quadrantName: "Big Bets"
     }
 ];
 
@@ -165,6 +174,7 @@ function drawBlips(svg, data, chartWidth, chartHeight) {
             const spacingY = chartHeight / 8;
 
             const patterns = {
+                9: [ { dx: -spacingX*1.2, dy: -spacingY*1.2 }, { dx: 0, dy: -spacingY*1.2 }, { dx: spacingX*1.2, dy: -spacingY*1.2 }, { dx: -spacingX*1.2, dy: 0 }, { dx: 0, dy: 0 }, { dx: spacingX*1.2, dy: 0 }, { dx: -spacingX*1.2, dy: spacingY*1.2 }, { dx: 0, dy: spacingY*1.2 }, { dx: spacingX*1.2, dy: spacingY*1.2 } ],
                 8: [ { dx: -spacingX*1.2, dy: -spacingY }, { dx: 0, dy: -spacingY*1.2 }, { dx: spacingX*1.2, dy: -spacingY }, { dx: -spacingX*0.8, dy: 0 }, { dx: spacingX*0.8, dy: 0 }, { dx: -spacingX*1.2, dy: spacingY }, { dx: 0, dy: spacingY*1.2 }, { dx: spacingX*1.2, dy: spacingY } ],
                 7: [ { dx: -spacingX, dy: -spacingY*1.0 }, { dx: 0, dy: -spacingY*1.2 }, { dx: spacingX, dy: -spacingY*1.0 }, { dx: -spacingX*0.5, dy: 0 },  { dx: spacingX*0.5, dy: 0 }, { dx: -spacingX, dy: spacingY*1.0 }, { dx: spacingX, dy: spacingY*1.0 } ],
                 6: [ { dx: -spacingX, dy: -spacingY*1.0 }, { dx: 0, dy: -spacingY*1.2 }, { dx: spacingX, dy: -spacingY*1.0 }, { dx: -spacingX, dy: spacingY*0.8 },  { dx: 0, dy: spacingY*1.0 },  { dx: spacingX, dy: spacingY*0.8 } ],
@@ -178,10 +188,7 @@ function drawBlips(svg, data, chartWidth, chartHeight) {
             jitter = JSON.parse(JSON.stringify(pattern[indexInQuadrant % pattern.length]));
             
             // Specific individual blip adjustments
-            if (d.id === "mno_predict_heal") { jitter.dy -= 10; } // up a bit
-            if (d.id === "fi_dev_hub_mvp") { jitter.dy -= 15; } // up a bit
-            if (d.id === "testing_data_prioritize") { jitter.dx += 20; } // right a bit
-            if (d.id === "build_analyze_select") { jitter.dy -= 15; } // up a bit
+            if (d.id === "qw_agentic_devsecops") { jitter.dx = 0; jitter.dy = -spacingY * 1.3; } // Position at top-middle
 
             return `translate(${baseCoords.x + jitter.dx}, ${baseCoords.y + jitter.dy})`;
         });
