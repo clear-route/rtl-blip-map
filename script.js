@@ -20,9 +20,10 @@ const initiativesData = [
         id: "testing_data_prioritize", label: "AI Testing: Data & Prioritize", valueCategory: "High", effortCategory: "High",
         rtlPhase: "Testing", rtlPhaseColor: "#4169E1", aiLevel: "High", aiSize: 15, quadrantName: "Big Bets"
     },
+    // MOVED to Quick Wins
     {
-        id: "dev_codegen_validate", label: "AI Dev: Code Gen & Validate", valueCategory: "High", effortCategory: "High",
-        rtlPhase: "Development", rtlPhaseColor: "#228B22", aiLevel: "Medium", aiSize: 10, quadrantName: "Big Bets"
+        id: "dev_codegen_validate", label: "AI Dev: Code Gen & Validate", valueCategory: "High", effortCategory: "Low", // Effort changed to Low
+        rtlPhase: "Development", rtlPhaseColor: "#228B22", aiLevel: "Medium", aiSize: 7, quadrantName: "Quick Wins" // Moved to QW, size adjusted
     },
     {
         id: "build_analyze_select", label: "AI Build: Analyze & Select", valueCategory: "Medium", effortCategory: "Medium",
@@ -54,8 +55,9 @@ const initiativesData = [
         id: "qw_secrets_vault", label: "Basic Secrets Vault Setup", valueCategory: "High", effortCategory: "Low",
         rtlPhase: "Secure", rtlPhaseColor: "#8A2BE2", aiLevel: "Low", aiSize: 7, quadrantName: "Quick Wins"
     },
+    // CHANGED label
     {
-        id: "fi_dev_hub_mvp", label: "Launch Basic Developer Hub (MVP)", valueCategory: "Medium", effortCategory: "Medium",
+        id: "fi_dev_hub_mvp", label: "Launch Internal Developer Platform (MVP)", valueCategory: "Medium", effortCategory: "Medium",
         rtlPhase: "Development", rtlPhaseColor: "#228B22", aiLevel: "Low", aiSize: 7, quadrantName: "Fill-ins / Incrementals"
     },
     {
@@ -70,9 +72,24 @@ const initiativesData = [
         id: "ts_overcustom_cots", label: "Over-customizing COTS Tools", valueCategory: "Low", effortCategory: "High",
         rtlPhase: "Platform", rtlPhaseColor: "#800080", aiLevel: "Low", aiSize: 7, quadrantName: "Time Sinks / Reconsider"
     },
+    // REMOVED ts_blind_automation
+
+    // ADDED initiatives
     {
-        id: "ts_blind_automation", label: "100% Test Automation Blindly", valueCategory: "Low", effortCategory: "High",
-        rtlPhase: "Test", rtlPhaseColor: "#4169E1", aiLevel: "Low", aiSize: 7, quadrantName: "Time Sinks / Reconsider"
+        id: "fi_ai_code_reviews", label: "AI Assisted Code Reviews", valueCategory: "Medium", effortCategory: "Medium",
+        rtlPhase: "Development", rtlPhaseColor: "#228B22", aiLevel: "Medium", aiSize: 10, quadrantName: "Fill-ins / Incrementals"
+    },
+    {
+        id: "bb_auto_release_docs", label: "Automated Release/Gov Docs", valueCategory: "High", effortCategory: "High",
+        rtlPhase: "Deployment", rtlPhaseColor: "#DC143C", aiLevel: "Low", aiSize: 7, quadrantName: "Big Bets"
+    },
+    {
+        id: "bb_ephemeral_envs", label: "Ephemeral Test Environments", valueCategory: "High", effortCategory: "High",
+        rtlPhase: "Environments", rtlPhaseColor: "#800080", aiLevel: "Low", aiSize: 7, quadrantName: "Big Bets"
+    },
+    {
+        id: "bb_header_routing_mocks", label: "Header-based Routing (Mocks)", valueCategory: "High", effortCategory: "Medium",
+        rtlPhase: "Testing", rtlPhaseColor: "#4169E1", aiLevel: "Low", aiSize: 7, quadrantName: "Big Bets"
     }
 ];
 
@@ -141,7 +158,6 @@ function getQuadrantCenterCoordinates(quadrantName, chartWidth, chartHeight) {
 }
 
 function drawBlips(svg, data, chartWidth, chartHeight) {
-    // const SCATTER_FACTOR = 35; // Not used for static layout
     const blipItems = svg.append("g").attr("class", "blips")
         .selectAll(".blip-item")
         .data(data)
@@ -152,7 +168,7 @@ function drawBlips(svg, data, chartWidth, chartHeight) {
             let jitter = {dx: 0, dy: 0};
             const quadrantBlipData = data.filter(item => item.quadrantName === d.quadrantName);
             const indexInQuadrant = quadrantBlipData.findIndex(item => item.id === d.id);
-            
+
             const spacingX = chartWidth / 8; 
             const spacingY = chartHeight / 8;
 
@@ -164,6 +180,11 @@ function drawBlips(svg, data, chartWidth, chartHeight) {
                 { dx: -spacingX*0.7, dy: -spacingY*0.9 }, { dx: spacingX*0.7, dy: -spacingY*0.9 }, 
                 { dx: -spacingX*0.7, dy: spacingY*0.7 },  { dx: spacingX*0.7, dy: spacingY*0.7 }  
             ];
+             const fiveItemPattern = [ 
+                { dx: -spacingX*0.7, dy: -spacingY*0.9 }, { dx: spacingX*0.7, dy: -spacingY*0.9 }, 
+                { dx: 0, dy: 0 },
+                { dx: -spacingX*0.7, dy: spacingY*0.7 },  { dx: spacingX*0.7, dy: spacingY*0.7 }  
+            ];
             const threeItemPattern = [
                 { dx: 0, dy: -spacingY*0.9 }, 
                 { dx: -spacingX*0.7, dy: spacingY*0.7 }, 
@@ -172,47 +193,27 @@ function drawBlips(svg, data, chartWidth, chartHeight) {
             const twoItemPattern = [{ dx: -spacingX*0.6, dy: 0 }, { dx: spacingX*0.6, dy: 0 }]; 
             const oneItemPattern = [{dx: 0, dy: 0}];
 
-            if (d.quadrantName === "Big Bets" && indexInQuadrant < sixItemPattern.length) {
-                jitter = JSON.parse(JSON.stringify(sixItemPattern[indexInQuadrant])); 
-            } else if (quadrantBlipData.length >= 4 && indexInQuadrant < fourItemPattern.length) { 
+            // Logic to select pattern based on number of items in the quadrant
+            if (quadrantBlipData.length >= 6) {
+                 jitter = JSON.parse(JSON.stringify(sixItemPattern[indexInQuadrant % sixItemPattern.length])); 
+            } else if (quadrantBlipData.length === 5) {
+                 jitter = JSON.parse(JSON.stringify(fiveItemPattern[indexInQuadrant])); 
+            } else if (quadrantBlipData.length === 4) {
                  jitter = JSON.parse(JSON.stringify(fourItemPattern[indexInQuadrant])); 
-            } else if (quadrantBlipData.length === 3 && indexInQuadrant < threeItemPattern.length) {
+            } else if (quadrantBlipData.length === 3) {
                  jitter = JSON.parse(JSON.stringify(threeItemPattern[indexInQuadrant]));
-            } else if (quadrantBlipData.length === 2 && indexInQuadrant < twoItemPattern.length) {
+            } else if (quadrantBlipData.length === 2) {
                  jitter = JSON.parse(JSON.stringify(twoItemPattern[indexInQuadrant])); 
-            } else if (quadrantBlipData.length === 1 && indexInQuadrant < oneItemPattern.length) {
+            } else if (quadrantBlipData.length === 1) {
                  jitter = JSON.parse(JSON.stringify(oneItemPattern[indexInQuadrant])); 
             }
-
-            // Specific individual blip adjustments (previous, from commit 715658d)
-            if (d.id === "envs_forecast_selfserve") { 
-                jitter.dx += 15; 
-                jitter.dy -= 15; 
-            }
-            if (d.id === "deploy_risk_canary") { 
-                // Previous nudge was dy -= 10. New request 'up' can be additive or replace.
-                // Assuming additive for further movement: additional dy -= 10
-                jitter.dy -= 10; // This makes it -10 on top of any pattern dy
-            }
-            if (d.id === "qw_api_testing_prev") { 
-                // Previous nudge was dy -= 10.
-                // Assuming additive for further movement: additional dy -=10
-                jitter.dy -= 10; // This makes it -10 on top of any pattern dy 
-            }
-
-            // New specific adjustments from User Message 117
-            if (d.id === "ts_microservices_prev") { // "hasty microservices up and left"
-                jitter.dx -= 10; // More left
-                jitter.dy -= 10; // More up
-            }
-            // For deploy_risk_canary, a nudge was already applied. Another 'up' is requested.
-            // The previous generic 'up' was dy -= 10. Another generic one could be on top. Total -20 from original pattern+scatter.
-            if (d.id === "deploy_risk_canary") { // "AI deploy / risk & canary up" (again)
-                 jitter.dy -= 10; // Additional -10 making it -20 total from prior specific nudge.
-            }
-            if (d.id === "build_analyze_select") { // "ai build analyze and select up slighly"
-                jitter.dy -= 8; // More up
-            }
+            
+            // Specific individual blip adjustments
+            if (d.id === "envs_forecast_selfserve") { jitter.dx += 15; jitter.dy -= 15; }
+            if (d.id === "deploy_risk_canary") { jitter.dy -= 20; } // Cumulative up
+            if (d.id === "qw_api_testing_prev") { jitter.dy -= 10; }
+            if (d.id === "ts_microservices_prev") { jitter.dx -= 10; jitter.dy -= 10; }
+            if (d.id === "build_analyze_select") { jitter.dy -= 8; }
 
             return `translate(${baseCoords.x + jitter.dx}, ${baseCoords.y + jitter.dy})`;
         });
