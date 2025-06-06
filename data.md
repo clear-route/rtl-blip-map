@@ -144,8 +144,8 @@ The matrix plots initiatives based on **Expected Business Value / Strategic Impa
 
 ---
 
-### 13. Initiative: Basic Secrets Vault Setup
-*   **Label:** "Basic Secrets Vault Setup"
+### 13. Initiative: Secrets Vault Setup (CHANGED)
+*   **Label:** "Secrets Vault Setup"
 *   **RTL Phase:** Secure
 *   **Color:** BlueViolet (#8A2BE2)
 *   **AI Integration:** Low / Standard (Size: Small - 7px radius)

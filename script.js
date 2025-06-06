@@ -48,10 +48,9 @@ const initiativesData = [
         rtlPhase: "Test", rtlPhaseColor: "#4169E1", aiLevel: "Low", aiSize: 7, quadrantName: "Quick Wins"
     },
     {
-        id: "qw_secrets_vault", label: "Basic Secrets Vault Setup", valueCategory: "High", effortCategory: "Low",
+        id: "qw_secrets_vault", label: "Secrets Vault Setup", valueCategory: "High", effortCategory: "Low", // CHANGED wording
         rtlPhase: "Secure", rtlPhaseColor: "#8A2BE2", aiLevel: "Low", aiSize: 7, quadrantName: "Quick Wins"
     },
-    // MOVED to Big Bets
     {
         id: "fi_dev_hub_mvp", label: "Launch Internal Developer Platform (MVP)", valueCategory: "High", effortCategory: "Medium",
         rtlPhase: "Development", rtlPhaseColor: "#228B22", aiLevel: "Low", aiSize: 7, quadrantName: "Big Bets"
@@ -165,43 +164,24 @@ function drawBlips(svg, data, chartWidth, chartHeight) {
             const spacingX = chartWidth / 8; 
             const spacingY = chartHeight / 8;
 
-            const eightItemPattern = [
-                { dx: -spacingX*1.2, dy: -spacingY }, { dx: 0, dy: -spacingY*1.2 }, { dx: spacingX*1.2, dy: -spacingY },
-                { dx: -spacingX*0.8, dy: 0 }, { dx: spacingX*0.8, dy: 0 },
-                { dx: -spacingX*1.2, dy: spacingY }, { dx: 0, dy: spacingY*1.2 }, { dx: spacingX*1.2, dy: spacingY },
-            ];
-            const sevenItemPattern = [
-                { dx: -spacingX, dy: -spacingY*1.0 }, { dx: 0, dy: -spacingY*1.2 }, { dx: spacingX, dy: -spacingY*1.0 }, 
-                { dx: -spacingX*0.5, dy: 0 },  { dx: spacingX*0.5, dy: 0 },
-                { dx: -spacingX, dy: spacingY*1.0 }, { dx: spacingX, dy: spacingY*1.0 }
-            ];
-
-            if (quadrantBlipData.length >= 8) {
-                jitter = JSON.parse(JSON.stringify(eightItemPattern[indexInQuadrant % eightItemPattern.length]));
-            } else if (quadrantBlipData.length === 7) {
-                 jitter = JSON.parse(JSON.stringify(sevenItemPattern[indexInQuadrant % sevenItemPattern.length])); 
-            } else {
-                // Fallback to simpler patterns for fewer items
-                const patterns = {
-                    6: [ { dx: -spacingX, dy: -spacingY*1.0 }, { dx: 0, dy: -spacingY*1.2 }, { dx: spacingX, dy: -spacingY*1.0 }, { dx: -spacingX, dy: spacingY*0.8 },  { dx: 0, dy: spacingY*1.0 },  { dx: spacingX, dy: spacingY*0.8 } ],
-                    5: [ { dx: -spacingX*0.7, dy: -spacingY*0.9 }, { dx: spacingX*0.7, dy: -spacingY*0.9 }, { dx: 0, dy: 0 }, { dx: -spacingX*0.7, dy: spacingY*0.7 }, { dx: spacingX*0.7, dy: spacingY*0.7 } ],
-                    4: [ { dx: -spacingX*0.7, dy: -spacingY*0.9 }, { dx: spacingX*0.7, dy: -spacingY*0.9 }, { dx: -spacingX*0.7, dy: spacingY*0.7 },  { dx: spacingX*0.7, dy: spacingY*0.7 } ],
-                    3: [ { dx: 0, dy: -spacingY*0.9 }, { dx: -spacingX*0.7, dy: spacingY*0.7 }, { dx: spacingX*0.7, dy: spacingY*0.7 } ],
-                    2: [ { dx: -spacingX*0.6, dy: 0 }, { dx: spacingX*0.6, dy: 0 } ],
-                    1: [ { dx: 0, dy: 0 } ]
-                };
-                const pattern = patterns[quadrantBlipData.length] || [{dx:0, dy:0}];
-                jitter = JSON.parse(JSON.stringify(pattern[indexInQuadrant % pattern.length]));
-            }
+            const patterns = {
+                8: [ { dx: -spacingX*1.2, dy: -spacingY }, { dx: 0, dy: -spacingY*1.2 }, { dx: spacingX*1.2, dy: -spacingY }, { dx: -spacingX*0.8, dy: 0 }, { dx: spacingX*0.8, dy: 0 }, { dx: -spacingX*1.2, dy: spacingY }, { dx: 0, dy: spacingY*1.2 }, { dx: spacingX*1.2, dy: spacingY } ],
+                7: [ { dx: -spacingX, dy: -spacingY*1.0 }, { dx: 0, dy: -spacingY*1.2 }, { dx: spacingX, dy: -spacingY*1.0 }, { dx: -spacingX*0.5, dy: 0 },  { dx: spacingX*0.5, dy: 0 }, { dx: -spacingX, dy: spacingY*1.0 }, { dx: spacingX, dy: spacingY*1.0 } ],
+                6: [ { dx: -spacingX, dy: -spacingY*1.0 }, { dx: 0, dy: -spacingY*1.2 }, { dx: spacingX, dy: -spacingY*1.0 }, { dx: -spacingX, dy: spacingY*0.8 },  { dx: 0, dy: spacingY*1.0 },  { dx: spacingX, dy: spacingY*0.8 } ],
+                5: [ { dx: -spacingX*0.7, dy: -spacingY*0.9 }, { dx: spacingX*0.7, dy: -spacingY*0.9 }, { dx: 0, dy: 0 }, { dx: -spacingX*0.7, dy: spacingY*0.7 }, { dx: spacingX*0.7, dy: spacingY*0.7 } ],
+                4: [ { dx: -spacingX*0.7, dy: -spacingY*0.9 }, { dx: spacingX*0.7, dy: -spacingY*0.9 }, { dx: -spacingX*0.7, dy: spacingY*0.7 },  { dx: spacingX*0.7, dy: spacingY*0.7 } ],
+                3: [ { dx: 0, dy: -spacingY*0.9 }, { dx: -spacingX*0.7, dy: spacingY*0.7 }, { dx: spacingX*0.7, dy: spacingY*0.7 } ],
+                2: [ { dx: -spacingX*0.6, dy: 0 }, { dx: spacingX*0.6, dy: 0 } ],
+                1: [ { dx: 0, dy: 0 } ]
+            };
+            const pattern = patterns[quadrantBlipData.length] || [{dx:0, dy:0}];
+            jitter = JSON.parse(JSON.stringify(pattern[indexInQuadrant % pattern.length]));
             
             // Specific individual blip adjustments
-            if (d.id === "mno_predict_heal") { jitter.dy += 25; jitter.dx -= 25; } // More down and left
-            if (d.id === "bb_ephemeral_envs") { jitter.dy -= 15; }
-            if (d.id === "qw_golden_paths_prev") { jitter.dx += 50; }
-            if (d.id === "bb_header_routing_mocks") { jitter.dx = -spacingX * 0.8; jitter.dy = 5; } // further left
-            if (d.id === "ts_manual_regression") { jitter.dy -= 15; } // up a bit
-            if (d.id === "ts_overcustom_cots") { jitter.dy += 15; } // down a bit
-
+            if (d.id === "mno_predict_heal") { jitter.dy -= 10; } // up a bit
+            if (d.id === "fi_dev_hub_mvp") { jitter.dy -= 15; } // up a bit
+            if (d.id === "testing_data_prioritize") { jitter.dx += 20; } // right a bit
+            if (d.id === "build_analyze_select") { jitter.dy -= 15; } // up a bit
 
             return `translate(${baseCoords.x + jitter.dx}, ${baseCoords.y + jitter.dy})`;
         });
